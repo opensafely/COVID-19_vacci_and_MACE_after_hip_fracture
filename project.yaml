@@ -1,12 +1,35 @@
-version: '4.0'
+version: "4.0"
 
 actions:
+
   generate_dataset:
-      run: >
-        ehrql:v1 generate-dataset analysis/dataset_definition.py 
-        --output output/dataset_covid_2021.arrow
-        --
-        --start_date 2021-03-01
-      outputs:
-        highly_sensitive:
-          population: output/dataset_covid_2021.arrow
+    run: ehrql:v1 generate-dataset analysis/dataset_definition.py
+      --output output/dataset.csv.gz
+    outputs:
+      highly_sensitive:
+        dataset: output/dataset.csv.gz
+
+  describe_population:
+    run: r:latest analysis/01_describe_population.R
+    needs: [generate_dataset]
+    outputs:
+      moderately_sensitive:
+        table1: output/tables/table1_by_vax_status.csv
+        flowchart: output/tables/flowchart.csv
+
+  survival_analysis:
+    run: r:latest analysis/02_survival_analysis.R
+    needs: [generate_dataset]
+    outputs:
+      moderately_sensitive:
+        cox_results: output/tables/cox_results.csv
+        km_data: output/figures/km_data.csv
+        fg_results: output/tables/fine_gray_results.csv
+
+  subgroup_analysis:
+    run: r:latest analysis/03_subgroup_analysis.R
+    needs: [generate_dataset]
+    outputs:
+      moderately_sensitive:
+        subgroup_results: output/tables/subgroup_results.csv
+        interaction_results: output/tables/interaction_results.csv

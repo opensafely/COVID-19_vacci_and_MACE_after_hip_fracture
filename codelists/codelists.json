@@ -6,167 +6,53 @@
       "downloaded_at": "2026-02-25 18:52:33.901176Z",
       "sha": "d95a2f826299563aa57f6fa99009e6e13a65151b"
     },
-    "opensafely-rsv-identification-primary-care.csv": {
-      "id": "opensafely/rsv-identification-primary-care/47b6884f",
-      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-identification-primary-care/47b6884f/",
-      "downloaded_at": "2026-02-25 18:52:33.961421Z",
-      "sha": "e0a6b548665f92602c8ed8ce6faf89b0285418cd"
+    "opensafely-smoking-clear-snomed.csv": {
+      "id": "opensafely/smoking-clear-snomed/6bedfe70",
+      "url": "https://www.opencodelists.org/codelist/opensafely/smoking-clear-snomed/6bedfe70/",
+      "downloaded_at": "2026-02-25 20:40:43.223268Z",
+      "sha": "9cd08ff50b2ea9a2005bf4bf9a1961d2acf2a22f"
     },
-    "opensafely-rsv-identification-secondary-care.csv": {
-      "id": "opensafely/rsv-identification-secondary-care/560dcda6",
-      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-identification-secondary-care/560dcda6/",
-      "downloaded_at": "2026-02-25 18:52:34.017307Z",
-      "sha": "ab9f9712939394b9b8f6a261ab3afb2d9f94daa4"
+    "opensafely-cardiovascular-secondary-care.csv": {
+      "id": "opensafely/cardiovascular-secondary-care/20b63bd4",
+      "url": "https://www.opencodelists.org/codelist/opensafely/cardiovascular-secondary-care/20b63bd4/",
+      "downloaded_at": "2026-02-25 20:15:11.463587Z",
+      "sha": "7c956ed25484f8c03dae29823031c27f2802914a"
     },
-    "opensafely-rsv-identification-primary-care-maximal-sensitivity.csv": {
-      "id": "opensafely/rsv-identification-primary-care-maximal-sensitivity/7c882eaf",
-      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-identification-primary-care-maximal-sensitivity/7c882eaf/",
-      "downloaded_at": "2026-02-25 18:52:34.084889Z",
-      "sha": "d8b2a5a6fdd7500171354af54c03c2769ffb8d6e"
+    "user-BillyZhongUOM-hip-fracture-icd-10.csv": {
+      "id": "user/BillyZhongUOM/hip-fracture-icd-10/0ec29807",
+      "url": "https://www.opencodelists.org/codelist/user/BillyZhongUOM/hip-fracture-icd-10/0ec29807/",
+      "downloaded_at": "2026-02-25 18:52:36.784557Z",
+      "sha": "21f49e854fb64e6e2b9916b9d2d1f8cdf2f18e12"
     },
-    "opensafely-rsv-identification-prescriptions-maximal-sensitivity-dmd.csv": {
-      "id": "opensafely/rsv-identification-prescriptions-maximal-sensitivity-dmd/65062298",
-      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-identification-prescriptions-maximal-sensitivity-dmd/65062298/",
-      "downloaded_at": "2026-02-25 18:52:34.160596Z",
-      "sha": "3df89edeab0e2e010cda91cf8f00c03cd91c739d"
+    "user-BillyZhongUOM-non_fatal_mi.csv": {
+      "id": "user/BillyZhongUOM/non_fatal_mi/7865e4c7",
+      "url": "https://www.opencodelists.org/codelist/user/BillyZhongUOM/non_fatal_mi/7865e4c7/",
+      "downloaded_at": "2026-02-25 20:15:11.569505Z",
+      "sha": "5ea7124adc5bcfed66cabd98e0a57c98b20af016"
     },
-    "opensafely-rsv-exclusion-primary-care-maximal-sensitivity.csv": {
-      "id": "opensafely/rsv-exclusion-primary-care-maximal-sensitivity/0e4f7e8f",
-      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-exclusion-primary-care-maximal-sensitivity/0e4f7e8f/",
-      "downloaded_at": "2026-02-25 18:52:34.240197Z",
-      "sha": "ad069c67e67f6f4b9b448978a39a2a96fa1274a8"
+    "user-BillyZhongUOM-non_fatal_stroke.csv": {
+      "id": "user/BillyZhongUOM/non_fatal_stroke/5f567192",
+      "url": "https://www.opencodelists.org/codelist/user/BillyZhongUOM/non_fatal_stroke/5f567192/",
+      "downloaded_at": "2026-02-25 20:15:11.678021Z",
+      "sha": "6dedf7eb1a044c1379c67326993ebb802ea07b79"
     },
-    "opensafely-rsv-exclusion-secondary-care-maximal-sensitivity.csv": {
-      "id": "opensafely/rsv-exclusion-secondary-care-maximal-sensitivity/625ccb9f",
-      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-exclusion-secondary-care-maximal-sensitivity/625ccb9f/",
-      "downloaded_at": "2026-02-25 18:52:34.303295Z",
-      "sha": "85acc2056cf8b0b0700c0ee1a6784c804d50325b"
+    "nhsd-primary-care-domain-refsets-mi_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/mi_cod/20250912",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/mi_cod/20250912/",
+      "downloaded_at": "2026-02-25 19:36:42.062164Z",
+      "sha": "032c31381c68f95a3261c3ff7f0b55dd01f4ce66"
     },
-    "opensafely-covid-19-identification-primary-care.csv": {
-      "id": "opensafely/covid-19-identification-primary-care/2f7731a6",
-      "url": "https://www.opencodelists.org/codelist/opensafely/covid-19-identification-primary-care/2f7731a6/",
-      "downloaded_at": "2026-02-25 18:52:34.361281Z",
-      "sha": "7f7b874001887d5a2649685484f5b0240b9bfc35"
-    },
-    "opensafely-covid-identification.csv": {
-      "id": "opensafely/covid-identification/2020-06-03",
-      "url": "https://www.opencodelists.org/codelist/opensafely/covid-identification/2020-06-03/",
-      "downloaded_at": "2026-02-25 18:52:34.423688Z",
-      "sha": "124db6929439379b7dacd55ba26ae4f2ed9370bc"
-    },
-    "opensafely-covid-19-identification-primary-care-maximal-sensitivity.csv": {
-      "id": "opensafely/covid-19-identification-primary-care-maximal-sensitivity/52781f2a",
-      "url": "https://www.opencodelists.org/codelist/opensafely/covid-19-identification-primary-care-maximal-sensitivity/52781f2a/",
-      "downloaded_at": "2026-02-25 18:52:34.506153Z",
-      "sha": "a9d5d5c9e652a4850e36a8499243c6210bb4da5e"
-    },
-    "opensafely-covid-19-identification-prescriptions-dmd.csv": {
-      "id": "opensafely/covid-19-identification-prescriptions-dmd/32e73c2e",
-      "url": "https://www.opencodelists.org/codelist/opensafely/covid-19-identification-prescriptions-dmd/32e73c2e/",
-      "downloaded_at": "2026-02-25 18:52:34.567361Z",
-      "sha": "7c17a141fc9c02fa85d885fa6c21bc398e9a957e"
-    },
-    "opensafely-covid-19-exclusion-primary-care-maximal-sensitivity.csv": {
-      "id": "opensafely/covid-19-exclusion-primary-care-maximal-sensitivity/03e32400",
-      "url": "https://www.opencodelists.org/codelist/opensafely/covid-19-exclusion-primary-care-maximal-sensitivity/03e32400/",
-      "downloaded_at": "2026-02-25 18:52:34.640477Z",
-      "sha": "cdf022d35fc2224852848d18065143358cf3ec98"
-    },
-    "opensafely-covid-19-exclusion-secondary-care-maximal-sensitivity.csv": {
-      "id": "opensafely/covid-19-exclusion-secondary-care-maximal-sensitivity/1fa5572b",
-      "url": "https://www.opencodelists.org/codelist/opensafely/covid-19-exclusion-secondary-care-maximal-sensitivity/1fa5572b/",
-      "downloaded_at": "2026-02-25 18:52:34.703205Z",
-      "sha": "8385338c41606f05b550704400f59c20431774a9"
-    },
-    "opensafely-influenza-identification-primary-care.csv": {
-      "id": "opensafely/influenza-identification-primary-care/2b370a92",
-      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-identification-primary-care/2b370a92/",
-      "downloaded_at": "2026-02-25 18:52:34.764366Z",
-      "sha": "eac1e41a22ca77f453969710e55a6a6322c82a56"
-    },
-    "opensafely-influenza-identification-secondary-care.csv": {
-      "id": "opensafely/influenza-identification-secondary-care/3cfe5a71",
-      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-identification-secondary-care/3cfe5a71/",
-      "downloaded_at": "2026-02-25 18:52:34.828294Z",
-      "sha": "29f102e6fd667e9ed466cbfc06c310d7d781991e"
-    },
-    "opensafely-influenza-identification-primary-care-maximal-sensitivity.csv": {
-      "id": "opensafely/influenza-identification-primary-care-maximal-sensitivity/178d1749",
-      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-identification-primary-care-maximal-sensitivity/178d1749/",
-      "downloaded_at": "2026-02-25 18:52:34.889989Z",
-      "sha": "7f187e95de072872a9495744a0ea52a3dd59be97"
-    },
-    "opensafely-acute-respiratory-illness-primary-care.csv": {
-      "id": "opensafely/acute-respiratory-illness-primary-care/30f1c6ca",
-      "url": "https://www.opencodelists.org/codelist/opensafely/acute-respiratory-illness-primary-care/30f1c6ca/",
-      "downloaded_at": "2026-02-25 18:52:34.957432Z",
-      "sha": "059df7a11e9429127190acc3c57f5836611034f9"
-    },
-    "opensafely-symptoms-fever.csv": {
-      "id": "opensafely/symptoms-fever/758b5341",
-      "url": "https://www.opencodelists.org/codelist/opensafely/symptoms-fever/758b5341/",
-      "downloaded_at": "2026-02-25 18:52:35.014734Z",
-      "sha": "189b0d500e232993d0cdf89d65a5ab1b3fa4bd99"
-    },
-    "opensafely-symptoms-cough.csv": {
-      "id": "opensafely/symptoms-cough/72d8934b",
-      "url": "https://www.opencodelists.org/codelist/opensafely/symptoms-cough/72d8934b/",
-      "downloaded_at": "2026-02-25 18:52:35.076565Z",
-      "sha": "a01cd677e02b9958eaab59cc6aa02c949d375e04"
-    },
-    "opensafely-influenza-identification-prescriptions-maximal-sensitivity-dmd.csv": {
-      "id": "opensafely/influenza-identification-prescriptions-maximal-sensitivity-dmd/4bf6af63",
-      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-identification-prescriptions-maximal-sensitivity-dmd/4bf6af63/",
-      "downloaded_at": "2026-02-25 18:52:35.136274Z",
-      "sha": "000e8053fa45aa912ac09bd9e7c51758fe69e04e"
-    },
-    "opensafely-influenza-exclusion-primary-care-maximal-sensitivity.csv": {
-      "id": "opensafely/influenza-exclusion-primary-care-maximal-sensitivity/7ed2e05f",
-      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-exclusion-primary-care-maximal-sensitivity/7ed2e05f/",
-      "downloaded_at": "2026-02-25 18:52:35.206339Z",
-      "sha": "9c8b6953a4c8ef86fc614b9806d3d5de0fc00ee3"
-    },
-    "opensafely-acute-respiratory-illness-secondary-care.csv": {
-      "id": "opensafely/acute-respiratory-illness-secondary-care/680e1eda",
-      "url": "https://www.opencodelists.org/codelist/opensafely/acute-respiratory-illness-secondary-care/680e1eda/",
-      "downloaded_at": "2026-02-25 18:52:35.261150Z",
-      "sha": "de46568efaf9c6661d32428bd4d52b1a6fa8d53e"
-    },
-    "opensafely-influenza-exclusion-secondary-care-maximal-sensitivity.csv": {
-      "id": "opensafely/influenza-exclusion-secondary-care-maximal-sensitivity/011d9210",
-      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-exclusion-secondary-care-maximal-sensitivity/011d9210/",
-      "downloaded_at": "2026-02-25 18:52:35.321707Z",
-      "sha": "1086f49c7646b98bf1c8f9fea7fbe27da125eb02"
-    },
-    "opensafely-migration-status.csv": {
-      "id": "opensafely/migration-status/4095ab22",
-      "url": "https://www.opencodelists.org/codelist/opensafely/migration-status/4095ab22/",
-      "downloaded_at": "2026-02-25 18:52:35.391044Z",
-      "sha": "93be296d33160a9d041c9cce118ea00659c0fd34"
-    },
-    "user-YaminaB-migration-status.csv": {
-      "id": "user/YaminaB/migration-status/47586e6d",
-      "url": "https://www.opencodelists.org/codelist/user/YaminaB/migration-status/47586e6d/",
-      "downloaded_at": "2026-02-25 18:52:35.451640Z",
-      "sha": "e24f799bcf0ff98fa34240696268ec7c1b71cb1e"
-    },
-    "user-ruthcostello-english-language-proficiency.csv": {
-      "id": "user/ruthcostello/english-language-proficiency/5c8fc8d4",
-      "url": "https://www.opencodelists.org/codelist/user/ruthcostello/english-language-proficiency/5c8fc8d4/",
-      "downloaded_at": "2026-02-25 18:52:35.515100Z",
-      "sha": "d8789c0899fd69f2c5fd7d848bc78d0a951c28e1"
+    "nhsd-primary-care-domain-refsets-strk_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/strk_cod/20250912",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/strk_cod/20250912/",
+      "downloaded_at": "2026-02-25 20:15:11.361845Z",
+      "sha": "14a9a227bebbe509459f1bbedd9ceb903a50d4d7"
     },
     "nhsd-primary-care-domain-refsets-hyp_cod.csv": {
       "id": "nhsd-primary-care-domain-refsets/hyp_cod/20250627",
       "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/hyp_cod/20250627/",
       "downloaded_at": "2026-02-25 18:52:35.575398Z",
       "sha": "f94870510a3550ff79710b2d88b551812bb2fb3b"
-    },
-    "nhsd-primary-care-domain-refsets-ast_cod.csv": {
-      "id": "nhsd-primary-care-domain-refsets/ast_cod/20250627",
-      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/ast_cod/20250627/",
-      "downloaded_at": "2026-02-25 18:52:35.630856Z",
-      "sha": "40b9e08f0468a0cb15af222d626da906d029911f"
     },
     "bristol-multimorbidity_copd.csv": {
       "id": "bristol/multimorbidity_copd/11c97d7b",
@@ -264,11 +150,113 @@
       "downloaded_at": "2026-02-25 18:52:36.680641Z",
       "sha": "abf5149c13d36cb977d9a338e5d3da9a32275b87"
     },
-    "user-BillyZhongUOM-hip-fracture-icd-10.csv": {
-      "id": "user/BillyZhongUOM/hip-fracture-icd-10/0ec29807",
-      "url": "https://www.opencodelists.org/codelist/user/BillyZhongUOM/hip-fracture-icd-10/0ec29807/",
-      "downloaded_at": "2026-02-25 18:52:36.784557Z",
-      "sha": "21f49e854fb64e6e2b9916b9d2d1f8cdf2f18e12"
+    "nhsd-primary-care-domain-refsets-ast_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/ast_cod/20250627",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/ast_cod/20250627/",
+      "downloaded_at": "2026-02-25 18:52:35.630856Z",
+      "sha": "40b9e08f0468a0cb15af222d626da906d029911f"
+    },
+    "primis-covid19-vacc-uptake-chd_cov.csv": {
+      "id": "primis-covid19-vacc-uptake/chd_cov/5791cbc7",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/chd_cov/5791cbc7/",
+      "downloaded_at": "2026-02-25 21:08:34.016570Z",
+      "sha": "72aa0ad397960337be0243c793b8514a920635a1"
+    },
+    "primis-covid19-vacc-uptake-ckd_cov.csv": {
+      "id": "primis-covid19-vacc-uptake/ckd_cov/0a7765c1",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/ckd_cov/0a7765c1/",
+      "downloaded_at": "2026-02-25 21:08:34.399344Z",
+      "sha": "b74d3cdbeda3ccbef212135bbb02871686177af1"
+    },
+    "primis-covid19-vacc-uptake-ckd15.csv": {
+      "id": "primis-covid19-vacc-uptake/ckd15/09b0b232",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/ckd15/09b0b232/",
+      "downloaded_at": "2026-02-25 21:08:34.491678Z",
+      "sha": "c2e147ad688bcfa209eccf10587cdd27807e5eda"
+    },
+    "primis-covid19-vacc-uptake-ckd35.csv": {
+      "id": "primis-covid19-vacc-uptake/ckd35/7980326d",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/ckd35/7980326d/",
+      "downloaded_at": "2026-02-25 21:08:34.606950Z",
+      "sha": "2e2e33d85817844bb8922fc6c87583c898f61ec5"
+    },
+    "primis-covid19-vacc-uptake-cld.csv": {
+      "id": "primis-covid19-vacc-uptake/cld/2386d8f6",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/cld/2386d8f6/",
+      "downloaded_at": "2026-02-25 21:08:34.716757Z",
+      "sha": "5749bbf6646310f435fa029dac659ba4274e1d81"
+    },
+    "primis-covid19-vacc-uptake-diab.csv": {
+      "id": "primis-covid19-vacc-uptake/diab/4cc6cbef",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/diab/4cc6cbef/",
+      "downloaded_at": "2026-02-25 21:08:34.847891Z",
+      "sha": "545f7a1395c5f96a0c7c398e94e021acff38a217"
+    },
+    "primis-covid19-vacc-uptake-dmres.csv": {
+      "id": "primis-covid19-vacc-uptake/dmres/17f5258f",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/dmres/17f5258f/",
+      "downloaded_at": "2026-02-25 21:08:34.936986Z",
+      "sha": "57682a6345da78472609f01f1ca065ace27fcb43"
+    },
+    "primis-covid19-vacc-uptake-sev_mental.csv": {
+      "id": "primis-covid19-vacc-uptake/sev_mental/63237f2e",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/sev_mental/63237f2e/",
+      "downloaded_at": "2026-02-25 21:08:35.042308Z",
+      "sha": "d07f3689babb1f2fb2d099f4041af204ce0a1e9d"
+    },
+    "primis-covid19-vacc-uptake-smhres.csv": {
+      "id": "primis-covid19-vacc-uptake/smhres/70a13efc",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/smhres/70a13efc/",
+      "downloaded_at": "2026-02-25 21:08:35.139367Z",
+      "sha": "d6f6c5495cf765eb721464361e20b46fe23632b9"
+    },
+    "primis-covid19-vacc-uptake-cns_cov.csv": {
+      "id": "primis-covid19-vacc-uptake/cns_cov/41fbcc17",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/cns_cov/41fbcc17/",
+      "downloaded_at": "2026-02-25 21:08:35.653493Z",
+      "sha": "e46a3766e0b740c2d33443569615c53e9e8b2be5"
+    },
+    "primis-covid19-vacc-uptake-immdx_cov.csv": {
+      "id": "primis-covid19-vacc-uptake/immdx_cov/044b3246",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/immdx_cov/044b3246/",
+      "downloaded_at": "2026-02-25 21:08:35.899315Z",
+      "sha": "d16a553f0b1906a1ab271d4a30cd952917ae16d5"
+    },
+    "primis-covid19-vacc-uptake-immrx.csv": {
+      "id": "primis-covid19-vacc-uptake/immrx/2572e55d",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/immrx/2572e55d/",
+      "downloaded_at": "2026-02-25 21:08:36.076738Z",
+      "sha": "3ee06176c1949ea4322904562d9436c2d005ab66"
+    },
+    "primis-covid19-vacc-uptake-spln_cov.csv": {
+      "id": "primis-covid19-vacc-uptake/spln_cov/22c02567",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/spln_cov/22c02567/",
+      "downloaded_at": "2026-02-25 21:08:36.190682Z",
+      "sha": "92c30f87699830987ab813a9c23e86a7972c5fda"
+    },
+    "primis-covid19-vacc-uptake-learndis.csv": {
+      "id": "primis-covid19-vacc-uptake/learndis/54df0bd1",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/learndis/54df0bd1/",
+      "downloaded_at": "2026-02-25 21:08:36.329405Z",
+      "sha": "dad8c8af1247ecdbe3b4cb6291ca9284edd27883"
+    },
+    "primis-covid19-vacc-uptake-bmi.csv": {
+      "id": "primis-covid19-vacc-uptake/bmi/47614c03",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/bmi/47614c03/",
+      "downloaded_at": "2026-02-25 21:08:36.420977Z",
+      "sha": "6e96c04ee1a647905be2b410fa2c33d770576bf0"
+    },
+    "primis-covid19-vacc-uptake-bmi_stage.csv": {
+      "id": "primis-covid19-vacc-uptake/bmi_stage/5dbdff42",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/bmi_stage/5dbdff42/",
+      "downloaded_at": "2026-02-25 21:08:36.512788Z",
+      "sha": "7fd744bb94c1789632247a3fc1780910f421b172"
+    },
+    "primis-covid19-vacc-uptake-sev_obesity.csv": {
+      "id": "primis-covid19-vacc-uptake/sev_obesity/07c4a5cb",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/sev_obesity/07c4a5cb/",
+      "downloaded_at": "2026-02-25 21:08:36.603626Z",
+      "sha": "dfe3662bed703c590d1449e604e892cdd7a360c1"
     }
   }
 }
