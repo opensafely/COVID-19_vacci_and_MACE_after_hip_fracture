@@ -1,291 +1,711 @@
-from pathlib import Path 
+######################################
+# Dataset definition
+# COVID-19 vaccination and risk of major adverse cardiac events after hip fracture
+#
+# This ehrQL dataset definition extracts the study population and variables
+# for the analysis of COVID-19 vaccination and MACE risk after hip fracture.
+#
+# Data sources: OpenSAFELY-TPP primary care, APCS (SUS), ONS mortality, SGSS
+######################################
 
-from datetime import date, datetime
-from ehrql import Dataset, create_dataset, case, when, minimum_of, years, days, months, get_parameter, claim_permissions
+from datetime import date
+
+from ehrql import create_dataset, codelist_from_csv, days, years, months, case, when, minimum_of
 from ehrql.tables.tpp import (
-  patients,
-  medications,
-  ons_deaths,
-  addresses,
-  clinical_events,
-  practice_registrations,
-  vaccinations,
-  apcs,
-  emergency_care_attendances,
-  ethnicity_from_sus, 
-  appointments
+    patients,
+    practice_registrations,
+    clinical_events,
+    medications,
+    apcs,
+    ons_deaths,
+    addresses,
+    vaccinations,
+    sgss_covid_all_tests,
+    ethnicity_from_sus,
 )
 
-import codelists
+##########################################################################
+# Import codelists
+##########################################################################
 
-from variable_lib import (
-  emergency_care_diagnosis_matches,
-  hospitalisation_primary_secondary_diagnosis_matches,
-  hospital_events,
-  gp_events,
-  first_gp_event,
-  rural_urban_5,
-  has_prior_event,
-  has_prior_meds,
-  is_gp_event
+# --- Hip fracture identification (ICD-10 and OPCS-4) ---
+# These are defined inline as simple lists since they are short, well-defined code sets.
+# ICD-10 codes for hip fracture diagnosis (without dots, as stored in APCS)
+hip_fracture_icd10 = ["S720", "S721", "S722", "S729"]
+
+# OPCS-4 codes for hip fracture procedures (without dots)
+hip_fracture_opcs4 = ["W241", "W461", "W471", "W191", "W481"]
+
+# ICD-10 codes for transport accidents (exclusion criterion)
+# V01-V99: we use the prefix "V" to match all transport accident codes
+transport_accident_prefix = "V"
+
+# --- Outcome codelists (loaded from CSV files in codelists/) ---
+# Myocardial infarction ICD-10 codes
+mi_icd10_codes = codelist_from_csv(
+    "codelists/mi-icd10.csv",
+    column="code",
 )
 
-from clinical_risk_grps import *
-from vaccine_history import *
-claim_permissions("appointments")
-start_date = date.fromisoformat(get_parameter("start_date"))
+# Ischaemic stroke ICD-10 codes
+stroke_icd10_codes = codelist_from_csv(
+    "codelists/stroke-icd10.csv",
+    column="code",
+)
+
+# Combined MACE ICD-10 codes (MI + stroke + CVD death codes)
+cvd_death_icd10_codes = codelist_from_csv(
+    "codelists/cvd-death-icd10.csv",
+    column="code",
+)
+
+# --- Outcome codelists for primary care (SNOMED) ---
+mi_snomed_codes = codelist_from_csv(
+    "codelists/mi-snomed.csv",
+    column="code",
+)
+
+stroke_snomed_codes = codelist_from_csv(
+    "codelists/stroke-snomed.csv",
+    column="code",
+)
+
+# --- Negative control outcome ---
+cataract_opcs4_codes = codelist_from_csv(
+    "codelists/cataract-opcs4.csv",
+    column="code",
+)
+
+# --- Confounder / covariate codelists (SNOMED) ---
+cvd_snomed_codes = codelist_from_csv(
+    "codelists/cvd-snomed.csv",
+    column="code",
+)
+
+mi_history_snomed_codes = codelist_from_csv(
+    "codelists/mi-history-snomed.csv",
+    column="code",
+)
+
+stroke_history_snomed_codes = codelist_from_csv(
+    "codelists/stroke-history-snomed.csv",
+    column="code",
+)
+
+fracture_snomed_codes = codelist_from_csv(
+    "codelists/fracture-snomed.csv",
+    column="code",
+)
+
+smoking_clear_snomed_codes = codelist_from_csv(
+    "codelists/smoking-clear-snomed.csv",
+    column="code",
+    category_column="category",
+)
+
+ethnicity_snomed_codes = codelist_from_csv(
+    "codelists/ethnicity-snomed.csv",
+    column="code",
+    category_column="category",
+)
+
+# --- Medication codelists (dm+d) ---
+bone_med_codes = codelist_from_csv(
+    "codelists/bone-medications-dmd.csv",
+    column="code",
+)
+
+statin_codes = codelist_from_csv(
+    "codelists/statins-dmd.csv",
+    column="code",
+)
+
+antiplatelet_codes = codelist_from_csv(
+    "codelists/antiplatelets-dmd.csv",
+    column="code",
+)
+
+anticoagulant_codes = codelist_from_csv(
+    "codelists/anticoagulants-dmd.csv",
+    column="code",
+)
+
+# --- Charlson comorbidity codelists (SNOMED) ---
+charlson_snomed_codes = codelist_from_csv(
+    "codelists/charlson-snomed.csv",
+    column="code",
+    category_column="category",
+)
+
+##########################################################################
+# Study dates
+##########################################################################
+
+study_start_date = date(2019, 1, 1)     # Earliest hip fracture date
+study_end_date = date(2025, 1, 1)       # Latest hip fracture date (1 yr before data end)
+data_end_date = date(2026, 1, 1)        # End of follow-up / data availability
+lookback_start = date(2017, 1, 1)       # Earliest date for lookback (2 yr before study start)
+
+##########################################################################
+# Create dataset
+##########################################################################
 
 dataset = create_dataset()
-dataset.configure_dummy_data(population_size=100, additional_population_constraint = (((practice_registrations.for_patient_on(start_date).end_date)>(start_date)) | (practice_registrations.for_patient_on(start_date).end_date.is_null())) & (((ons_deaths.date)>(start_date)) | (ons_deaths.date.is_null())))
+dataset.configure_dummy_data(population_size=10000)
 
-#  ---------------------- Inclusion criteria --------------------------------
-# assessed each year
-# Age 0 - 110 (as per WP2)
-age_at_start = patients.age_on(start_date)
-age_filter = (age_at_start >= 0) & (
-    age_at_start <= 110)
+##########################################################################
+# Identify hip fractures from APCS
+##########################################################################
 
-# Registered at start date
-# Create dataset that can be applied for all three infections
-# if age <1 change inclusion
-was_registered = case(
-    when((age_at_start < 1)).then(
-        practice_registrations.where(practice_registrations.start_date.is_on_or_before(start_date)).exists_for_patient()
-    ),
-    when((age_at_start >= 1)).then(
-        practice_registrations.spanning_with_systmone(start_date - days(90), start_date).exists_for_patient()
+# Hip fracture admissions: diagnosed OR operated on for hip fracture
+# between study_start_date and study_end_date
+# Emergency admissions only (admission_method starts with "2" = emergency)
+# Exclude transport accidents and age < 50
+
+hip_fracture_admissions = (
+    apcs
+    .where(
+        apcs.admission_date.is_on_or_between(study_start_date, study_end_date)
+    )
+    .where(
+        # Has a hip fracture diagnosis OR procedure
+        apcs.all_diagnoses.contains_any_of(hip_fracture_icd10)
+        | apcs.all_procedures.contains_any_of(hip_fracture_opcs4)
+    )
+    .where(
+        # Exclude transport accidents (V01-V99)
+        ~apcs.all_diagnoses.contains(transport_accident_prefix)
+    )
+    .where(
+        # Emergency admissions only: admission_method starting with "2"
+        # (21=A&E, 22=GP, 23=Bed bureau, 24=Consultant clinic, 25=MH crisis,
+        #  2A=A&E of another provider, 2B=Transfer, 2C=Baby born in hosp,
+        #  2D=Other emergency, 28=Other)
+        # Exclude elective: 11, 12, 13
+        (apcs.admission_method != "11")
+        & (apcs.admission_method != "12")
+        & (apcs.admission_method != "13")
     )
 )
 
-# Alive at start date
-was_alive = ((patients.date_of_death.is_after(start_date) | patients.date_of_death.is_null())
+# Get the FIRST hip fracture per patient in the study window
+first_hf = (
+    hip_fracture_admissions
+    .sort_by(apcs.admission_date)
+    .first_for_patient()
 )
 
-# known sex
-has_known_sex = patients.sex.is_in(["female", "male", "intersex"])
+# Check patient had no prior hip fracture in the 2-year lookback period
+prior_hf = (
+    apcs
+    .where(
+        apcs.admission_date.is_on_or_between(lookback_start, study_start_date - days(1))
+    )
+    .where(
+        apcs.all_diagnoses.contains_any_of(hip_fracture_icd10)
+        | apcs.all_procedures.contains_any_of(hip_fracture_opcs4)
+    )
+    .exists_for_patient()
+)
+
+##########################################################################
+# Define study population
+##########################################################################
+
+# Age at index (hip fracture admission date)
+age_at_index = patients.age_on(first_hf.admission_date)
+
+# GP registration: patient must be registered with a TPP practice at index
+registered_at_index = (
+    practice_registrations
+    .where(practice_registrations.start_date <= first_hf.admission_date)
+    .except_where(practice_registrations.end_date < first_hf.admission_date)
+    .exists_for_patient()
+)
 
 dataset.define_population(
-    was_alive
-    & was_registered
-    & has_known_sex
-    & age_filter
+    # Has a hip fracture admission in study window
+    first_hf.admission_date.is_not_null()
+    # No prior hip fracture in lookback period
+    & ~prior_hf
+    # Age >= 50 at index
+    & (age_at_index >= 50)
+    # Registered with a TPP GP practice at index
+    & registered_at_index
+)
+
+##########################################################################
+# Population variables
+##########################################################################
+
+# GP registration start date (most recent registration spanning the index date)
+current_registration = (
+    practice_registrations
+    .where(practice_registrations.start_date <= first_hf.admission_date)
+    .except_where(practice_registrations.end_date < first_hf.admission_date)
+    .sort_by(practice_registrations.start_date)
+    .last_for_patient()
+)
+dataset.gp_registration_start = current_registration.start_date
+
+# Index date (date of first hip fracture)
+dataset.index_date = first_hf.admission_date
+
+# Emergency vs elective flag (should be all emergency given population criteria,
+# but included for verification)
+dataset.emergency_hf = case(
+    when(
+        (first_hf.admission_method != "11")
+        & (first_hf.admission_method != "12")
+        & (first_hf.admission_method != "13")
+    ).then(1),
+    otherwise=0,
+)
+
+# Trauma flag: transport accident codes present in the spell
+# (should be 0 for all given exclusion, but kept for verification)
+dataset.trauma_flag = case(
+    when(first_hf.all_diagnoses.contains(transport_accident_prefix)).then(1),
+    otherwise=0,
+)
+
+# Age at index
+dataset.age = age_at_index
+
+##########################################################################
+# Exposure variables: COVID-19 vaccination
+##########################################################################
+
+# All COVID-19 vaccinations
+covid_vax = vaccinations.where(
+    vaccinations.target_disease == "SARS-2 CORONAVIRUS"
+)
+
+# COVID-19 vaccination within 365 days before index
+dataset.covax = covid_vax.where(
+    covid_vax.date.is_on_or_between(
+        first_hf.admission_date - days(365),
+        first_hf.admission_date
     )
+).exists_for_patient()
 
-# Information for follow-up 
-dataset.dereg_date = (
-  (practice_registrations.for_patient_on(start_date)).end_date
+# All COVID vaccinations sorted by date - extract up to 10 doses
+covid_vax_sorted = covid_vax.sort_by(covid_vax.date)
+
+# First COVID vaccine
+first_covid_vax = covid_vax_sorted.first_for_patient()
+dataset.covax_date_1 = first_covid_vax.date
+dataset.covax_type_1 = first_covid_vax.product_name
+
+# Second COVID vaccine
+second_covid_vax = (
+    covid_vax
+    .where(covid_vax.date > first_covid_vax.date)
+    .sort_by(covid_vax.date)
+    .first_for_patient()
 )
-dataset.ons_death_date = ons_deaths.date
+dataset.covax_date_2 = second_covid_vax.date
+dataset.covax_type_2 = second_covid_vax.product_name
 
-# EXPOSURE
-dataset.ethnicity6_gp = (
-   clinical_events.where(clinical_events.snomedct_code.is_in(codelists.ethnicity6_codes))
-    .where(clinical_events.date.is_on_or_before(start_date))
+# Third COVID vaccine
+third_covid_vax = (
+    covid_vax
+    .where(covid_vax.date > second_covid_vax.date)
+    .sort_by(covid_vax.date)
+    .first_for_patient()
+)
+dataset.covax_date_3 = third_covid_vax.date
+dataset.covax_type_3 = third_covid_vax.product_name
+
+# Fourth COVID vaccine
+fourth_covid_vax = (
+    covid_vax
+    .where(covid_vax.date > third_covid_vax.date)
+    .sort_by(covid_vax.date)
+    .first_for_patient()
+)
+dataset.covax_date_4 = fourth_covid_vax.date
+dataset.covax_type_4 = fourth_covid_vax.product_name
+
+# Fifth COVID vaccine
+fifth_covid_vax = (
+    covid_vax
+    .where(covid_vax.date > fourth_covid_vax.date)
+    .sort_by(covid_vax.date)
+    .first_for_patient()
+)
+dataset.covax_date_5 = fifth_covid_vax.date
+dataset.covax_type_5 = fifth_covid_vax.product_name
+
+# Sixth COVID vaccine
+sixth_covid_vax = (
+    covid_vax
+    .where(covid_vax.date > fifth_covid_vax.date)
+    .sort_by(covid_vax.date)
+    .first_for_patient()
+)
+dataset.covax_date_6 = sixth_covid_vax.date
+dataset.covax_type_6 = sixth_covid_vax.product_name
+
+##########################################################################
+# Exposure variables: Influenza vaccination
+##########################################################################
+
+flu_vax = vaccinations.where(
+    vaccinations.target_disease == "Influenza"
+)
+
+# Flu vaccination within 365 days before index
+dataset.fluvax = flu_vax.where(
+    flu_vax.date.is_on_or_between(
+        first_hf.admission_date - days(365),
+        first_hf.admission_date
+    )
+).exists_for_patient()
+
+flu_vax_sorted = flu_vax.sort_by(flu_vax.date)
+
+# First flu vaccine
+first_flu_vax = flu_vax_sorted.first_for_patient()
+dataset.fluvax_date_1 = first_flu_vax.date
+dataset.fluvax_type_1 = first_flu_vax.product_name
+
+# Second flu vaccine
+second_flu_vax = (
+    flu_vax
+    .where(flu_vax.date > first_flu_vax.date)
+    .sort_by(flu_vax.date)
+    .first_for_patient()
+)
+dataset.fluvax_date_2 = second_flu_vax.date
+dataset.fluvax_type_2 = second_flu_vax.product_name
+
+# Third flu vaccine
+third_flu_vax = (
+    flu_vax
+    .where(flu_vax.date > second_flu_vax.date)
+    .sort_by(flu_vax.date)
+    .first_for_patient()
+)
+dataset.fluvax_date_3 = third_flu_vax.date
+dataset.fluvax_type_3 = third_flu_vax.product_name
+
+# Fourth flu vaccine
+fourth_flu_vax = (
+    flu_vax
+    .where(flu_vax.date > third_flu_vax.date)
+    .sort_by(flu_vax.date)
+    .first_for_patient()
+)
+dataset.fluvax_date_4 = fourth_flu_vax.date
+dataset.fluvax_type_4 = fourth_flu_vax.product_name
+
+# Fifth flu vaccine
+fifth_flu_vax = (
+    flu_vax
+    .where(flu_vax.date > fourth_flu_vax.date)
+    .sort_by(flu_vax.date)
+    .first_for_patient()
+)
+dataset.fluvax_date_5 = fifth_flu_vax.date
+dataset.fluvax_type_5 = fifth_flu_vax.product_name
+
+# Sixth flu vaccine
+sixth_flu_vax = (
+    flu_vax
+    .where(flu_vax.date > fifth_flu_vax.date)
+    .sort_by(flu_vax.date)
+    .first_for_patient()
+)
+dataset.fluvax_date_6 = sixth_flu_vax.date
+dataset.fluvax_type_6 = sixth_flu_vax.product_name
+
+##########################################################################
+# Outcome variables
+##########################################################################
+
+# --- MI from hospital admissions (ICD-10) ---
+mi_hospital = (
+    apcs
+    .where(apcs.admission_date > first_hf.admission_date)
+    .where(apcs.admission_date <= first_hf.admission_date + days(365))
+    .where(
+        apcs.all_diagnoses.contains_any_of(mi_icd10_codes)
+    )
+    .sort_by(apcs.admission_date)
+    .first_for_patient()
+)
+
+# --- MI from primary care (SNOMED) ---
+mi_primary_care = (
+    clinical_events
+    .where(clinical_events.snomedct_code.is_in(mi_snomed_codes))
+    .where(clinical_events.date > first_hf.admission_date)
+    .where(clinical_events.date <= first_hf.admission_date + days(365))
+    .sort_by(clinical_events.date)
+    .first_for_patient()
+)
+
+# First MI event (earliest across hospital and primary care)
+dataset.mi_date = minimum_of(mi_hospital.admission_date, mi_primary_care.date)
+dataset.mi365 = dataset.mi_date.is_not_null()
+
+# --- Stroke from hospital admissions (ICD-10) ---
+stroke_hospital = (
+    apcs
+    .where(apcs.admission_date > first_hf.admission_date)
+    .where(apcs.admission_date <= first_hf.admission_date + days(365))
+    .where(
+        apcs.all_diagnoses.contains_any_of(stroke_icd10_codes)
+    )
+    .sort_by(apcs.admission_date)
+    .first_for_patient()
+)
+
+# --- Stroke from primary care (SNOMED) ---
+stroke_primary_care = (
+    clinical_events
+    .where(clinical_events.snomedct_code.is_in(stroke_snomed_codes))
+    .where(clinical_events.date > first_hf.admission_date)
+    .where(clinical_events.date <= first_hf.admission_date + days(365))
+    .sort_by(clinical_events.date)
+    .first_for_patient()
+)
+
+# First stroke event
+dataset.stroke_date = minimum_of(stroke_hospital.admission_date, stroke_primary_care.date)
+dataset.stroke365 = dataset.stroke_date.is_not_null()
+
+# --- CVD death from ONS mortality ---
+# Check cause of death fields for CVD codes
+cvd_death = (
+    ons_deaths.cause_of_death_is_in(cvd_death_icd10_codes)
+    & (ons_deaths.date > first_hf.admission_date)
+    & (ons_deaths.date <= first_hf.admission_date + days(365))
+)
+
+dataset.cvddeath_date = case(
+    when(cvd_death).then(ons_deaths.date),
+)
+dataset.cvddeath365 = cvd_death
+
+# --- Composite MACE outcome ---
+dataset.mace_date = minimum_of(
+    dataset.mi_date,
+    dataset.stroke_date,
+    dataset.cvddeath_date,
+)
+dataset.mace365 = dataset.mace_date.is_not_null()
+
+# --- All-cause death (competing risk) ---
+dataset.all_cause_death_date = ons_deaths.date
+
+# --- Negative control: Cataract surgery ---
+cataract_surgery = (
+    apcs
+    .where(apcs.admission_date > first_hf.admission_date)
+    .where(apcs.admission_date <= first_hf.admission_date + days(365))
+    .where(
+        apcs.all_procedures.contains_any_of(cataract_opcs4_codes)
+    )
+    .sort_by(apcs.admission_date)
+    .first_for_patient()
+)
+dataset.neg_con_1_date = cataract_surgery.admission_date
+dataset.neg_con_1 = dataset.neg_con_1_date.is_not_null()
+
+##########################################################################
+# Confounder / modifier / mediator variables
+##########################################################################
+
+# --- Demographics ---
+
+# Sex
+dataset.sex = patients.sex
+
+# Ethnicity (from primary care, with SUS fallback)
+latest_ethnicity_code = (
+    clinical_events
+    .where(clinical_events.snomedct_code.is_in(ethnicity_snomed_codes))
     .sort_by(clinical_events.date)
     .last_for_patient()
-    .snomedct_code.to_category(codelists.ethnicity6_codes)
+    .snomedct_code
 )
 
-dataset.ethnicity16_gp = (clinical_events.where(clinical_events.snomedct_code.is_in(codelists.ethnicity16_codes))
-    .where(clinical_events.date.is_on_or_before(start_date))
-    .sort_by(clinical_events.date)
-    .last_for_patient()
-    .snomedct_code.to_category(codelists.ethnicity16_codes)
-)
+dataset.ethnicity = latest_ethnicity_code.to_category(ethnicity_snomed_codes)
 
+# Ethnicity from SUS (fallback)
 dataset.ethnicity_sus = ethnicity_from_sus.code
 
-# COVARIATES
-# demographics
-dataset.sex = patients.sex
-dataset.age = age_at_start
-dataset.age_group = case(
-    when((dataset.age >= 0) & (dataset.age < 5)).then("preschool"),
-    when((dataset.age >= 5) & (dataset.age < 18)).then("school"),
-    when((dataset.age >= 18) & (dataset.age < 65)).then("adult_under_65"),
-    when((dataset.age >= 65) & (dataset.age < 75)).then("adult_under_75"),
-    when((dataset.age >= 75) & (dataset.age < 80)).then("adult_under_80"),
-    when((dataset.age >= 80) & (dataset.age < 111)).then("adult_80+")
+# Region (NHS England region based on registered practice)
+dataset.resgor = current_registration.practice_nuts1_region_name
+
+# Index of Multiple Deprivation (quintile)
+address_at_index = addresses.for_patient_on(first_hf.admission_date)
+dataset.imd5 = address_at_index.imd_quintile
+
+# --- Clinical variables ---
+
+# Type of hip fracture surgery (from the first hip fracture spell)
+dataset.surgery_type = case(
+    when(first_hf.all_procedures.contains("W241")).then("internal_fixation_nail_screw"),
+    when(first_hf.all_procedures.contains("W191")).then("internal_fixation_pin_plate"),
+    when(first_hf.all_procedures.contains("W461")).then("hemiarthroplasty_cemented"),
+    when(first_hf.all_procedures.contains("W471")).then("hemiarthroplasty_uncemented"),
+    when(first_hf.all_procedures.contains("W481")).then("hemiarthroplasty_nec"),
+    otherwise="other_or_none",
 )
-dataset.urban_rural_5 = rural_urban_5(start_date)
 
+# History of cardiovascular disease (any time before index)
+dataset.prior_cvd = (
+    clinical_events
+    .where(clinical_events.snomedct_code.is_in(cvd_snomed_codes))
+    .where(clinical_events.date < first_hf.admission_date)
+    .exists_for_patient()
+)
 
-imd_rounded = addresses.for_patient_on(start_date).imd_rounded
-max_imd = 32844
- 
-dataset.imd_quintile = case(
-    when((imd_rounded >= 0) & (imd_rounded <= int(max_imd * 1 / 5))).then(1),
-    when(imd_rounded <= int(max_imd * 2 / 5)).then(2),
-    when(imd_rounded <= int(max_imd * 3 / 5)).then(3),
-    when(imd_rounded <= int(max_imd * 4 / 5)).then(4),
-    when(imd_rounded <= max_imd).then(5),
-    otherwise = 99
+# History of MI
+dataset.prior_mi = (
+    clinical_events
+    .where(clinical_events.snomedct_code.is_in(mi_history_snomed_codes))
+    .where(clinical_events.date < first_hf.admission_date)
+    .exists_for_patient()
+)
+
+# History of ischaemic stroke
+dataset.prior_stroke = (
+    clinical_events
+    .where(clinical_events.snomedct_code.is_in(stroke_history_snomed_codes))
+    .where(clinical_events.date < first_hf.admission_date)
+    .exists_for_patient()
+)
+
+# Charlson Comorbidity Index
+# Note: Computing a full CCI in ehrQL requires multiple condition-specific
+# codelists and weighted scoring. This is a simplified version using a
+# single codelist with category weights. The full implementation should be
+# done in the downstream analysis script.
+# For now, count the number of distinct Charlson comorbidity categories present.
+dataset.cci = (
+    clinical_events
+    .where(clinical_events.snomedct_code.is_in(charlson_snomed_codes))
+    .where(clinical_events.date < first_hf.admission_date)
+    .snomedct_code
+    .to_category(charlson_snomed_codes)
+    .count_distinct_for_patient()
+)
+
+# History of prior fracture at any site
+dataset.prior_frac = (
+    clinical_events
+    .where(clinical_events.snomedct_code.is_in(fracture_snomed_codes))
+    .where(clinical_events.date < first_hf.admission_date)
+    .exists_for_patient()
+)
+
+# BMI: most recent value before index
+bmi_record = (
+    clinical_events
+    .where(clinical_events.snomedct_code == "60621009")  # SNOMED for BMI
+    .where(clinical_events.date < first_hf.admission_date)
+    .where(clinical_events.numeric_value.is_not_null())
+    .where(
+        (clinical_events.numeric_value >= 12.0)
+        & (clinical_events.numeric_value <= 80.0)
     )
-
-# Comorbidity - add cms once finalised by Zoe and Shrinkhala
-
-#******** High risk vaccination group for COVID at start date - code from comparative spring booster 2023 
-# Clinical risk groups stay the same but age restrictions change through follow-up
-# Will be assessed at start_date and determine if eligible at that point
-dataset.covid_atrisk_grp = covid_atrisk(start_date) # in clinical risk group
-dataset.flu_atrisk_grp = flu_atrisk(start_date) 
-# define eligibility based on age as well
-# in 2021 no column created as all FALSE
-if start_date.year==2021 :
-   dataset.vacc_elig_covid = case(
-       when(dataset.age>= 0).then(False),
-       )
-if start_date.year==2022 :
-   dataset.vacc_elig_covid = case(
-       when((dataset.age>= 16) | ((dataset.age>12) & (dataset.age< 16) & (dataset.covid_atrisk_grp==True))).then(True),
-       otherwise=False,
-   )
-if start_date.year==2023 :
-   dataset.vacc_elig_covid = case(
-       when((dataset.age>=50) | ((dataset.age >=5) & (dataset.age <50) & (dataset.covid_atrisk_grp==True))).then(True),
-       otherwise = False,
-   )
-if start_date.year==2024 :
-   dataset.vacc_elig_covid = case(
-       when((dataset.age>=65) | ((dataset.age >=0) & (dataset.age <65) & (dataset.covid_atrisk_grp==True))).then(True),
-       otherwise = False,
-   )
-
-# Flu eligibility
-dataset.vacc_elig_flu = case(
-    when((dataset.age>=65) | ((dataset.age >= 2) & (dataset.age < 17)) | ((dataset.age > 0) & (dataset.flu_atrisk_grp==True))).then(True),
-    otherwise = False
+    .sort_by(clinical_events.date)
+    .last_for_patient()
 )
-
-# RSV eligibility - age 75 to 79 only. Not including pregnanacy currently.
-dataset.vacc_elig_rsv = case(
-    when((dataset.age >= 75) & (dataset.age < 80)).then(True),
-    otherwise = False
-)
-
-# vaccination status for flu, COVID (season prior and current season) & RSV (ever)
-# Need vaccinations for year of follow-up so start at end of period then look back for vaccinations both during follow-up and year prior.
-
-#extract flu vaccination in previous season
-dataset.prior_flu_vaccination = (
-vaccinations.where(vaccinations.target_disease.is_in(["INFLUENZA"]))
-.sort_by(vaccinations.date)
-.where(vaccinations.date.is_on_or_between(start_date - years(1), start_date - days(1)))
-.last_for_patient().date
-)
-
-#extract flu vaccination in current season
-dataset.flu_vaccination_date = (
-vaccinations.where(vaccinations.target_disease.is_in(["INFLUENZA"]))
-.sort_by(vaccinations.date)
-.where(vaccinations.date.is_on_or_between(start_date, start_date + years(1)))
-.first_for_patient().date
-)
-
-#extract covid vaccination in previous season if applicable
-dataset.prior_covid_vaccination = (
-    vaccinations.where(vaccinations.target_disease.is_in(["SARS-2 Coronavirus"]))
-    .sort_by(vaccinations.date)
-    .where(vaccinations.date.is_on_or_between(start_date - years(1), start_date - days(1)))
-    .last_for_patient().date
-)
-
-#extract covid vaccination in current season if applicable
-dataset.covid_vaccination_date = (
-    vaccinations.where(vaccinations.target_disease.is_in(["SARS-2 Coronavirus"]))
-    .sort_by(vaccinations.date)
-    .where(vaccinations.date.is_on_or_between(start_date, start_date + years(1)))
-    .first_for_patient().date
-)
-
-#extract RSV vaccination in 2024
-if start_date.year==2024 :
-    dataset.rsv_vaccination = (
-        vaccinations.where(vaccinations.target_disease.is_in(["HUMAN RESPIRATORY SYNCYTIAL VIRUS"]))
-        .sort_by(vaccinations.date)
-        .where(vaccinations.date.is_on_or_between(start_date, start_date + years(1)))
-        .last_for_patient().date
-    )
-
-# BMI - part of risk groups so defining severe obesity
-dataset.severe_obesity = has_severe_obesity(start_date) 
-## Latest BMI
-bmi_record = clinical_events.where(
-        clinical_events.snomedct_code.is_in(codelists.bmi)
-    ).where(
-        (clinical_events.date >= (start_date - years(2))) & (clinical_events.date <= start_date)
-    ).sort_by(
-        clinical_events.date
-    ).last_for_patient()
-
 dataset.bmi = bmi_record.numeric_value
-dataset.bmi_date = bmi_record.date
 
-# Migrant status
-dataset.migrant = has_prior_event(codelists.migrant_codelist, start_date)
+# Smoking status: most recent before index
+dataset.smoking = (
+    clinical_events
+    .where(clinical_events.snomedct_code.is_in(smoking_clear_snomed_codes))
+    .where(clinical_events.date < first_hf.admission_date)
+    .sort_by(clinical_events.date)
+    .last_for_patient()
+    .snomedct_code
+    .to_category(smoking_clear_snomed_codes)
+)
 
-# Date entered UK
-#dataset.uk_entry_date = clinical_events.where(
-#        clinical_events.snomedct_code.is_in(codelists.entry_uk_codelist)
-#    ).where(
-#        clinical_events.date.is_on_or_before(start_date)
-#    ).sort_by(
-#        clinical_events.date
-#    ).first_for_patient().date
-#show(dataset.uk_entry_date)
+# Alcohol consumption: latest recorded before index
+# This uses the same pattern as smoking - a categorised codelist
+# Placeholder: will need a specific alcohol consumption codelist
+# For now, use hazardous alcohol use as a binary variable
+alcohol_snomed_codes = codelist_from_csv(
+    "codelists/alcohol-snomed.csv",
+    column="code",
+    category_column="category",
+)
+dataset.alcohol = (
+    clinical_events
+    .where(clinical_events.snomedct_code.is_in(alcohol_snomed_codes))
+    .where(clinical_events.date < first_hf.admission_date)
+    .sort_by(clinical_events.date)
+    .last_for_patient()
+    .snomedct_code
+    .to_category(alcohol_snomed_codes)
+)
 
-
-# English language proficiency
-dataset.english_language = has_prior_event(codelists.english_language_codelist, start_date)
-
-# Define outcome - primary care or secondary care COVID
-# extract date of first episode 
-dataset.covid_primary_date = (
-      first_gp_event(codelists.covid_primary_codelist).date
+# Use of anti-osteoporosis medication (in the year before index)
+dataset.bone_med = (
+    medications
+    .where(medications.dmd_code.is_in(bone_med_codes))
+    .where(
+        medications.date.is_on_or_between(
+            first_hf.admission_date - days(365),
+            first_hf.admission_date,
+        )
     )
-#extract date of second episode
-dataset.covid_primary_second_date = (
-    is_gp_event(codelists.covid_primary_codelist)
-    .where(gp_events.date.is_on_or_after(dataset.covid_primary_date + months(1)))
-    .sort_by(gp_events.date).first_for_patient().date
+    .exists_for_patient()
 )
-#extract date of third episode
-dataset.covid_primary_third_date = (
-    is_gp_event(codelists.covid_primary_codelist)
-    .where(gp_events.date.is_on_or_after(dataset.covid_primary_second_date + months(1)))
-    .sort_by(gp_events.date).first_for_patient().date
-)
-# identifying covid in primary care  where there is an appointment in the appointments table on the same date
-dataset.covid_primary_appt = (
-   appointments.where(appointments.seen_date == dataset.covid_primary_date).exists_for_patient()
-   )
 
-dataset.covid_primary_second_appt = (
-    appointments.where(appointments.seen_date == dataset.covid_primary_second_date).exists_for_patient()
+# Use of statins / antiplatelets / anticoagulants (in the year before index)
+dataset.cvd_med = (
+    medications
+    .where(
+        medications.dmd_code.is_in(statin_codes)
+        | medications.dmd_code.is_in(antiplatelet_codes)
+        | medications.dmd_code.is_in(anticoagulant_codes)
+    )
+    .where(
+        medications.date.is_on_or_between(
+            first_hf.admission_date - days(365),
+            first_hf.admission_date,
+        )
+    )
+    .exists_for_patient()
 )
-dataset.covid_primary_third_appt = (
-    appointments.where(appointments.seen_date == dataset.covid_primary_third_date).exists_for_patient()
-)
-# extract date of first hospitalisation
-dataset.covid_sc_date = (
-    hospitalisation_primary_secondary_diagnosis_matches(codelists.covid_secondary_codelist)
-    .where(hospital_events.admission_date.is_on_or_between(start_date, start_date + years(1)))
-    .admission_date.minimum_for_patient()
-)
-#extract date of second episode - using the same criteria as the first episode
-dataset.covid_sc_second_date = (
-    hospitalisation_primary_secondary_diagnosis_matches(codelists.covid_secondary_codelist)
-    .where(hospital_events.admission_date.is_on_or_after(dataset.covid_sc_date + months(1)))
-    .admission_date.minimum_for_patient()
-)
-# extract first emergency care date
-dataset.covid_emerg_date = emergency_care_diagnosis_matches(codelists.covid_attendance).where(
-       emergency_care_attendances.arrival_date
-        .is_on_or_between(start_date, start_date + years(1))).arrival_date.minimum_for_patient()
-# extract second emergency care date
-dataset.covid_emerg_second_date = emergency_care_diagnosis_matches(codelists.covid_attendance).where(
-       emergency_care_attendances.arrival_date
-        .is_on_or_between(dataset.covid_emerg_date + months(1), start_date + years(1))).arrival_date.minimum_for_patient()
 
-dataset.has_covid_admission = dataset.covid_sc_date.is_not_null() | dataset.covid_emerg_date.is_not_null()
-dataset.covid_admission_date = minimum_of(dataset.covid_sc_date, dataset.covid_emerg_date)
+# --- Infection dates (confounder / mediator) ---
+
+# Date of positive SARS-CoV-2 test (most recent before index + 365 days)
+dataset.cov_date = (
+    sgss_covid_all_tests
+    .where(sgss_covid_all_tests.is_positive)
+    .where(sgss_covid_all_tests.specimen_taken_date <= first_hf.admission_date + days(365))
+    .sort_by(sgss_covid_all_tests.specimen_taken_date)
+    .last_for_patient()
+    .specimen_taken_date
+)
+
+# Recorded influenza infection (most recent before index + 365 days)
+# Using a broad influenza diagnosis SNOMED code
+flu_infection_snomed_codes = codelist_from_csv(
+    "codelists/influenza-infection-snomed.csv",
+    column="code",
+)
+dataset.flu_date = (
+    clinical_events
+    .where(clinical_events.snomedct_code.is_in(flu_infection_snomed_codes))
+    .where(clinical_events.date <= first_hf.admission_date + days(365))
+    .sort_by(clinical_events.date)
+    .last_for_patient()
+    .date
+)
+
+# --- Hip fracture spell details (for reference) ---
+dataset.hf_discharge_date = first_hf.discharge_date
+dataset.hf_admission_method = first_hf.admission_method
+dataset.hf_primary_diagnosis = first_hf.primary_diagnosis
