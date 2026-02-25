@@ -2,7 +2,11 @@ version: '4.0'
 
 actions:
   generate_dataset:
-    run: ehrql:v1 generate-dataset analysis/dataset_definition.py --output output/dataset.csv.gz
-    outputs:
-      highly_sensitive:
-        dataset: output/dataset.csv.gz
+      run: >
+        ehrql:v1 generate-dataset analysis/dataset_definition.py 
+        --output output/dataset_covid_2021.arrow
+        --
+        --start_date 2021-03-01
+      outputs:
+        highly_sensitive:
+          population: output/dataset_covid_2021.arrow
