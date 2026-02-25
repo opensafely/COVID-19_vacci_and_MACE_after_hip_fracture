@@ -1,3 +1,274 @@
 {
-  "files": {}
+  "files": {
+    "opensafely-ethnicity-snomed-0removed.csv": {
+      "id": "opensafely/ethnicity-snomed-0removed/22911876",
+      "url": "https://www.opencodelists.org/codelist/opensafely/ethnicity-snomed-0removed/22911876/",
+      "downloaded_at": "2026-02-25 18:52:33.901176Z",
+      "sha": "d95a2f826299563aa57f6fa99009e6e13a65151b"
+    },
+    "opensafely-rsv-identification-primary-care.csv": {
+      "id": "opensafely/rsv-identification-primary-care/47b6884f",
+      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-identification-primary-care/47b6884f/",
+      "downloaded_at": "2026-02-25 18:52:33.961421Z",
+      "sha": "e0a6b548665f92602c8ed8ce6faf89b0285418cd"
+    },
+    "opensafely-rsv-identification-secondary-care.csv": {
+      "id": "opensafely/rsv-identification-secondary-care/560dcda6",
+      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-identification-secondary-care/560dcda6/",
+      "downloaded_at": "2026-02-25 18:52:34.017307Z",
+      "sha": "ab9f9712939394b9b8f6a261ab3afb2d9f94daa4"
+    },
+    "opensafely-rsv-identification-primary-care-maximal-sensitivity.csv": {
+      "id": "opensafely/rsv-identification-primary-care-maximal-sensitivity/7c882eaf",
+      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-identification-primary-care-maximal-sensitivity/7c882eaf/",
+      "downloaded_at": "2026-02-25 18:52:34.084889Z",
+      "sha": "d8b2a5a6fdd7500171354af54c03c2769ffb8d6e"
+    },
+    "opensafely-rsv-identification-prescriptions-maximal-sensitivity-dmd.csv": {
+      "id": "opensafely/rsv-identification-prescriptions-maximal-sensitivity-dmd/65062298",
+      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-identification-prescriptions-maximal-sensitivity-dmd/65062298/",
+      "downloaded_at": "2026-02-25 18:52:34.160596Z",
+      "sha": "3df89edeab0e2e010cda91cf8f00c03cd91c739d"
+    },
+    "opensafely-rsv-exclusion-primary-care-maximal-sensitivity.csv": {
+      "id": "opensafely/rsv-exclusion-primary-care-maximal-sensitivity/0e4f7e8f",
+      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-exclusion-primary-care-maximal-sensitivity/0e4f7e8f/",
+      "downloaded_at": "2026-02-25 18:52:34.240197Z",
+      "sha": "ad069c67e67f6f4b9b448978a39a2a96fa1274a8"
+    },
+    "opensafely-rsv-exclusion-secondary-care-maximal-sensitivity.csv": {
+      "id": "opensafely/rsv-exclusion-secondary-care-maximal-sensitivity/625ccb9f",
+      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-exclusion-secondary-care-maximal-sensitivity/625ccb9f/",
+      "downloaded_at": "2026-02-25 18:52:34.303295Z",
+      "sha": "85acc2056cf8b0b0700c0ee1a6784c804d50325b"
+    },
+    "opensafely-covid-19-identification-primary-care.csv": {
+      "id": "opensafely/covid-19-identification-primary-care/2f7731a6",
+      "url": "https://www.opencodelists.org/codelist/opensafely/covid-19-identification-primary-care/2f7731a6/",
+      "downloaded_at": "2026-02-25 18:52:34.361281Z",
+      "sha": "7f7b874001887d5a2649685484f5b0240b9bfc35"
+    },
+    "opensafely-covid-identification.csv": {
+      "id": "opensafely/covid-identification/2020-06-03",
+      "url": "https://www.opencodelists.org/codelist/opensafely/covid-identification/2020-06-03/",
+      "downloaded_at": "2026-02-25 18:52:34.423688Z",
+      "sha": "124db6929439379b7dacd55ba26ae4f2ed9370bc"
+    },
+    "opensafely-covid-19-identification-primary-care-maximal-sensitivity.csv": {
+      "id": "opensafely/covid-19-identification-primary-care-maximal-sensitivity/52781f2a",
+      "url": "https://www.opencodelists.org/codelist/opensafely/covid-19-identification-primary-care-maximal-sensitivity/52781f2a/",
+      "downloaded_at": "2026-02-25 18:52:34.506153Z",
+      "sha": "a9d5d5c9e652a4850e36a8499243c6210bb4da5e"
+    },
+    "opensafely-covid-19-identification-prescriptions-dmd.csv": {
+      "id": "opensafely/covid-19-identification-prescriptions-dmd/32e73c2e",
+      "url": "https://www.opencodelists.org/codelist/opensafely/covid-19-identification-prescriptions-dmd/32e73c2e/",
+      "downloaded_at": "2026-02-25 18:52:34.567361Z",
+      "sha": "7c17a141fc9c02fa85d885fa6c21bc398e9a957e"
+    },
+    "opensafely-covid-19-exclusion-primary-care-maximal-sensitivity.csv": {
+      "id": "opensafely/covid-19-exclusion-primary-care-maximal-sensitivity/03e32400",
+      "url": "https://www.opencodelists.org/codelist/opensafely/covid-19-exclusion-primary-care-maximal-sensitivity/03e32400/",
+      "downloaded_at": "2026-02-25 18:52:34.640477Z",
+      "sha": "cdf022d35fc2224852848d18065143358cf3ec98"
+    },
+    "opensafely-covid-19-exclusion-secondary-care-maximal-sensitivity.csv": {
+      "id": "opensafely/covid-19-exclusion-secondary-care-maximal-sensitivity/1fa5572b",
+      "url": "https://www.opencodelists.org/codelist/opensafely/covid-19-exclusion-secondary-care-maximal-sensitivity/1fa5572b/",
+      "downloaded_at": "2026-02-25 18:52:34.703205Z",
+      "sha": "8385338c41606f05b550704400f59c20431774a9"
+    },
+    "opensafely-influenza-identification-primary-care.csv": {
+      "id": "opensafely/influenza-identification-primary-care/2b370a92",
+      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-identification-primary-care/2b370a92/",
+      "downloaded_at": "2026-02-25 18:52:34.764366Z",
+      "sha": "eac1e41a22ca77f453969710e55a6a6322c82a56"
+    },
+    "opensafely-influenza-identification-secondary-care.csv": {
+      "id": "opensafely/influenza-identification-secondary-care/3cfe5a71",
+      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-identification-secondary-care/3cfe5a71/",
+      "downloaded_at": "2026-02-25 18:52:34.828294Z",
+      "sha": "29f102e6fd667e9ed466cbfc06c310d7d781991e"
+    },
+    "opensafely-influenza-identification-primary-care-maximal-sensitivity.csv": {
+      "id": "opensafely/influenza-identification-primary-care-maximal-sensitivity/178d1749",
+      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-identification-primary-care-maximal-sensitivity/178d1749/",
+      "downloaded_at": "2026-02-25 18:52:34.889989Z",
+      "sha": "7f187e95de072872a9495744a0ea52a3dd59be97"
+    },
+    "opensafely-acute-respiratory-illness-primary-care.csv": {
+      "id": "opensafely/acute-respiratory-illness-primary-care/30f1c6ca",
+      "url": "https://www.opencodelists.org/codelist/opensafely/acute-respiratory-illness-primary-care/30f1c6ca/",
+      "downloaded_at": "2026-02-25 18:52:34.957432Z",
+      "sha": "059df7a11e9429127190acc3c57f5836611034f9"
+    },
+    "opensafely-symptoms-fever.csv": {
+      "id": "opensafely/symptoms-fever/758b5341",
+      "url": "https://www.opencodelists.org/codelist/opensafely/symptoms-fever/758b5341/",
+      "downloaded_at": "2026-02-25 18:52:35.014734Z",
+      "sha": "189b0d500e232993d0cdf89d65a5ab1b3fa4bd99"
+    },
+    "opensafely-symptoms-cough.csv": {
+      "id": "opensafely/symptoms-cough/72d8934b",
+      "url": "https://www.opencodelists.org/codelist/opensafely/symptoms-cough/72d8934b/",
+      "downloaded_at": "2026-02-25 18:52:35.076565Z",
+      "sha": "a01cd677e02b9958eaab59cc6aa02c949d375e04"
+    },
+    "opensafely-influenza-identification-prescriptions-maximal-sensitivity-dmd.csv": {
+      "id": "opensafely/influenza-identification-prescriptions-maximal-sensitivity-dmd/4bf6af63",
+      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-identification-prescriptions-maximal-sensitivity-dmd/4bf6af63/",
+      "downloaded_at": "2026-02-25 18:52:35.136274Z",
+      "sha": "000e8053fa45aa912ac09bd9e7c51758fe69e04e"
+    },
+    "opensafely-influenza-exclusion-primary-care-maximal-sensitivity.csv": {
+      "id": "opensafely/influenza-exclusion-primary-care-maximal-sensitivity/7ed2e05f",
+      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-exclusion-primary-care-maximal-sensitivity/7ed2e05f/",
+      "downloaded_at": "2026-02-25 18:52:35.206339Z",
+      "sha": "9c8b6953a4c8ef86fc614b9806d3d5de0fc00ee3"
+    },
+    "opensafely-acute-respiratory-illness-secondary-care.csv": {
+      "id": "opensafely/acute-respiratory-illness-secondary-care/680e1eda",
+      "url": "https://www.opencodelists.org/codelist/opensafely/acute-respiratory-illness-secondary-care/680e1eda/",
+      "downloaded_at": "2026-02-25 18:52:35.261150Z",
+      "sha": "de46568efaf9c6661d32428bd4d52b1a6fa8d53e"
+    },
+    "opensafely-influenza-exclusion-secondary-care-maximal-sensitivity.csv": {
+      "id": "opensafely/influenza-exclusion-secondary-care-maximal-sensitivity/011d9210",
+      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-exclusion-secondary-care-maximal-sensitivity/011d9210/",
+      "downloaded_at": "2026-02-25 18:52:35.321707Z",
+      "sha": "1086f49c7646b98bf1c8f9fea7fbe27da125eb02"
+    },
+    "opensafely-migration-status.csv": {
+      "id": "opensafely/migration-status/4095ab22",
+      "url": "https://www.opencodelists.org/codelist/opensafely/migration-status/4095ab22/",
+      "downloaded_at": "2026-02-25 18:52:35.391044Z",
+      "sha": "93be296d33160a9d041c9cce118ea00659c0fd34"
+    },
+    "user-YaminaB-migration-status.csv": {
+      "id": "user/YaminaB/migration-status/47586e6d",
+      "url": "https://www.opencodelists.org/codelist/user/YaminaB/migration-status/47586e6d/",
+      "downloaded_at": "2026-02-25 18:52:35.451640Z",
+      "sha": "e24f799bcf0ff98fa34240696268ec7c1b71cb1e"
+    },
+    "user-ruthcostello-english-language-proficiency.csv": {
+      "id": "user/ruthcostello/english-language-proficiency/5c8fc8d4",
+      "url": "https://www.opencodelists.org/codelist/user/ruthcostello/english-language-proficiency/5c8fc8d4/",
+      "downloaded_at": "2026-02-25 18:52:35.515100Z",
+      "sha": "d8789c0899fd69f2c5fd7d848bc78d0a951c28e1"
+    },
+    "nhsd-primary-care-domain-refsets-hyp_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/hyp_cod/20250627",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/hyp_cod/20250627/",
+      "downloaded_at": "2026-02-25 18:52:35.575398Z",
+      "sha": "f94870510a3550ff79710b2d88b551812bb2fb3b"
+    },
+    "nhsd-primary-care-domain-refsets-ast_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/ast_cod/20250627",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/ast_cod/20250627/",
+      "downloaded_at": "2026-02-25 18:52:35.630856Z",
+      "sha": "40b9e08f0468a0cb15af222d626da906d029911f"
+    },
+    "bristol-multimorbidity_copd.csv": {
+      "id": "bristol/multimorbidity_copd/11c97d7b",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_copd/11c97d7b/",
+      "downloaded_at": "2026-02-25 18:52:35.699699Z",
+      "sha": "450b4a7b2bf1e0bbba7793887cbc24e336bc0a36"
+    },
+    "bristol-multimorbidity_alcoholproblems.csv": {
+      "id": "bristol/multimorbidity_alcoholproblems/625d5706",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_alcoholproblems/625d5706/",
+      "downloaded_at": "2026-02-25 18:52:35.766177Z",
+      "sha": "dc142c184e1552b8e336085e8f65640441aac2de"
+    },
+    "bristol-multimorbidity_atrial-fibrillation.csv": {
+      "id": "bristol/multimorbidity_atrial-fibrillation/0f16bd85",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_atrial-fibrillation/0f16bd85/",
+      "downloaded_at": "2026-02-25 18:52:35.832973Z",
+      "sha": "aa15fe7ae83b7f9e711c915b1fe11185453c34a3"
+    },
+    "bristol-multimorbidity_cancer.csv": {
+      "id": "bristol/multimorbidity_cancer/7e1f8a31",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_cancer/7e1f8a31/",
+      "downloaded_at": "2026-02-25 18:52:35.921326Z",
+      "sha": "c65da230bbe59d9447f3bc2454ee86657799b41d"
+    },
+    "bristol-multimorbidity_chronic-kidney-disease.csv": {
+      "id": "bristol/multimorbidity_chronic-kidney-disease/651016fc",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_chronic-kidney-disease/651016fc/",
+      "downloaded_at": "2026-02-25 18:52:35.984116Z",
+      "sha": "6502b7582b2c614e64326970e1240c1016d2cd97"
+    },
+    "bristol-multimorbidity_dementia.csv": {
+      "id": "bristol/multimorbidity_dementia/43e863e5",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_dementia/43e863e5/",
+      "downloaded_at": "2026-02-25 18:52:36.044701Z",
+      "sha": "ed6a7c81742423f66d52561cd3417d1b200a10fb"
+    },
+    "bristol-multimorbidity_diabetes.csv": {
+      "id": "bristol/multimorbidity_diabetes/2ad8f0b0",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_diabetes/2ad8f0b0/",
+      "downloaded_at": "2026-02-25 18:52:36.101700Z",
+      "sha": "b9eb6e79ba7d1ae8afa07091bc904f14ea3ab96d"
+    },
+    "bristol-multimorbidity_epilepsy.csv": {
+      "id": "bristol/multimorbidity_epilepsy/78ba0a45",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_epilepsy/78ba0a45/",
+      "downloaded_at": "2026-02-25 18:52:36.162249Z",
+      "sha": "8b30fcbaf3706a0f6ce3a53edd60e4120256c296"
+    },
+    "bristol-multimorbidity_heart-failure.csv": {
+      "id": "bristol/multimorbidity_heart-failure/4c00a3c7",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_heart-failure/4c00a3c7/",
+      "downloaded_at": "2026-02-25 18:52:36.224127Z",
+      "sha": "05bed03484a500494aab80bed1e26823d906e36d"
+    },
+    "bristol-multimorbidity_irritable-bowel-syndrome.csv": {
+      "id": "bristol/multimorbidity_irritable-bowel-syndrome/32f13092",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_irritable-bowel-syndrome/32f13092/",
+      "downloaded_at": "2026-02-25 18:52:36.286485Z",
+      "sha": "886cc1bcb9a9729937c6930a08df1437bb22180d"
+    },
+    "bristol-multimorbidity_psychosisbipolar-disorder.csv": {
+      "id": "bristol/multimorbidity_psychosisbipolar-disorder/19e1bd5d",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_psychosisbipolar-disorder/19e1bd5d/",
+      "downloaded_at": "2026-02-25 18:52:36.351992Z",
+      "sha": "c8f8204fe3e07dfbc48d4d21f022addca8e9ddb0"
+    },
+    "bristol-multimorbidity_anxietydepression.csv": {
+      "id": "bristol/multimorbidity_anxietydepression/67c2d6f2",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_anxietydepression/67c2d6f2/",
+      "downloaded_at": "2026-02-25 18:52:36.423030Z",
+      "sha": "9e2884fcd885b4baef14e26a05987575abb246a5"
+    },
+    "bristol-multimorbidity_coronary-heart-disease.csv": {
+      "id": "bristol/multimorbidity_coronary-heart-disease/6b200f80",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_coronary-heart-disease/6b200f80/",
+      "downloaded_at": "2026-02-25 18:52:36.486367Z",
+      "sha": "c3577375defc551cee91886eabd6db5b70a53a38"
+    },
+    "bristol-multimorbidity_stroketransient-ischemic-attack.csv": {
+      "id": "bristol/multimorbidity_stroketransient-ischemic-attack/39012916",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_stroketransient-ischemic-attack/39012916/",
+      "downloaded_at": "2026-02-25 18:52:36.556831Z",
+      "sha": "b62119e7502058e4eb4183d21cee753811096898"
+    },
+    "bristol-multimorbidity_connective-tissue-disorder.csv": {
+      "id": "bristol/multimorbidity_connective-tissue-disorder/52109c4b",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_connective-tissue-disorder/52109c4b/",
+      "downloaded_at": "2026-02-25 18:52:36.624500Z",
+      "sha": "50397d659a80020e526f8b0305a1b7f2599116d5"
+    },
+    "bristol-multimorbidity_hearing-loss.csv": {
+      "id": "bristol/multimorbidity_hearing-loss/6c165b67",
+      "url": "https://www.opencodelists.org/codelist/bristol/multimorbidity_hearing-loss/6c165b67/",
+      "downloaded_at": "2026-02-25 18:52:36.680641Z",
+      "sha": "abf5149c13d36cb977d9a338e5d3da9a32275b87"
+    },
+    "user-BillyZhongUOM-hip-fracture-icd-10.csv": {
+      "id": "user/BillyZhongUOM/hip-fracture-icd-10/0ec29807",
+      "url": "https://www.opencodelists.org/codelist/user/BillyZhongUOM/hip-fracture-icd-10/0ec29807/",
+      "downloaded_at": "2026-02-25 18:52:36.784557Z",
+      "sha": "21f49e854fb64e6e2b9916b9d2d1f8cdf2f18e12"
+    }
+  }
 }
