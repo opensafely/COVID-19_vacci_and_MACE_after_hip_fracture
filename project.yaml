@@ -6,7 +6,6 @@ actions:
 
   generate_dataset:
     run: ehrql:v1 generate-dataset analysis/dataset_definition.py
-      --dummy-tables dummy-tables
       --output output/dataset.csv.gz
     outputs:
       highly_sensitive:
