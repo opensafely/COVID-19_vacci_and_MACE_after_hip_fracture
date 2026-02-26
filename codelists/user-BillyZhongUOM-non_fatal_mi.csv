@@ -1,0 +1,13 @@
+code,term
+I21,Acute myocardial infarction
+I210,Acute transmural myocardial infarction of anterior wall
+I211,Acute transmural myocardial infarction of inferior wall
+I212,Acute transmural myocardial infarction of other sites
+I213,Acute transmural myocardial infarction of unspecified site
+I214,Acute subendocardial myocardial infarction
+I219,"Acute myocardial infarction, unspecified"
+I22,Subsequent myocardial infarction
+I220,Subsequent myocardial infarction of anterior wall
+I221,Subsequent myocardial infarction of inferior wall
+I228,Subsequent myocardial infarction of other sites
+I229,Subsequent myocardial infarction of unspecified site
