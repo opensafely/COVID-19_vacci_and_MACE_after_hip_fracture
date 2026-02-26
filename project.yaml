@@ -2,11 +2,10 @@ version: "4.0"
 
 actions:
 
-# delect --dummy-table row when submitting the code
+# delect --dummy-table row when submitting the code (      --dummy-tables dummy-tables )
 
   generate_dataset:
     run: ehrql:v1 generate-dataset analysis/dataset_definition.py
-      --dummy-tables dummy-tables 
       --output output/dataset.csv.gz
     outputs:
       highly_sensitive:
