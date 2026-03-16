@@ -10,3 +10,11 @@ actions:
     outputs:
       highly_sensitive:
         dataset: output/dataset.csv.gz
+
+
+  generate_Fig2_histogram:
+    run: stata-mp:latest analysis/model.do
+    needs : [generate_dataset]
+    outputs:
+      moderately_sensitive:
+        chart: output/Fig2_histogram.png
