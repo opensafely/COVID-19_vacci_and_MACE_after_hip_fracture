@@ -6,15 +6,18 @@ actions:
 
   generate_dataset:
     run: ehrql:v1 generate-dataset analysis/dataset_definition.py
+      --dummy-tables dummy-tables
       --output output/dataset.csv.gz
     outputs:
       highly_sensitive:
         dataset: output/dataset.csv.gz
 
 
-  generate_Fig2_histogram:
-    run: stata-mp:latest analysis/model.do
+  generate_histograms:
+    run: stata-mp:latest analysis/histograms.do
     needs : [generate_dataset]
     outputs:
       moderately_sensitive:
-        chart: output/Fig2_histogram.png
+        Figures1: output/days_since_last_anyvax.svg
+        Figures2: output/days_since_last_covax.svg
+        Figures3: output/days_since_last_fluvax.svg
