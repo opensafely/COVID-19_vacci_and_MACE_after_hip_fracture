@@ -1,4 +1,4 @@
-version: "4.0"
+version: "5.0"
 
 actions:
 
@@ -13,9 +13,19 @@ actions:
         dataset: output/dataset.csv.gz
 
 
+  generate_analysis_dataset:
+    run: stata-mp:latest analysis/derive_covariates.do
+    needs: [generate_dataset]
+    outputs:
+      highly_sensitive:
+        log: logs/define_covariates.log
+        dataset: output/analytical_cohort.dta
+## stata-mp:latest works fine when running generate_analysis_dataset, but when running generate_dataset produces error "not supported"
+
+
   generate_histograms:
-    run: stata-mp:latest analysis/histograms.do
-    needs : [generate_dataset]
+    run: stata-mp:v2 analysis/histograms.do
+    needs : [generate_dataset, generate_analysis_dataset]
     outputs:
       moderately_sensitive:
         Figures1: output/days_since_last_anyvax.svg

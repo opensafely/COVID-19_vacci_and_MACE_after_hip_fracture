@@ -18,17 +18,7 @@ cd "output"
 
 
 ***** Dataset
-import delimited dataset.csv, clear
-
-
-***** Convert string dates to Stata dates
-gen index_date_stata = date(index_date, "YMD")
-gen covax_most_recent_date = date(covax_most_recent_before_index, "YMD")
-gen fluvax_most_recent_date = date(fluvax_most_recent_before_index, "YMD")
-egen anyvax_most_recent_date = rowmax(covax_most_recent_date fluvax_most_recent_date)
-foreach var of varlist index_date_stata covax_most_recent_date fluvax_most_recent_date anyvax_most_recent_date {
-    format `var' %td
-}
+use analytical_cohort.dta, clear
 
 
 ***** Calculate n days since most recent vaccination before index by type
