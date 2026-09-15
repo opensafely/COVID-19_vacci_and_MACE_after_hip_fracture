@@ -22,16 +22,15 @@ foreach var of varlist `r(varlist)' {
         format `var' %td
     }
 }
-ds, has(type string)
-foreach var of varlist `r(varlist)' {
-    quietly replace `var' = "1" if `var' == "T"
-    quietly replace `var' = "0" if `var' == "F"
-}
-* Keep identifiers and clinical code strings intact.
+* Convert only known boolean fields. F/T can be valid codes in other columns.
+* Keep identifiers, ethnicity source codes and clinical code strings intact.
 destring age imd_quintile bmi covax_prior365_n fluvax_prior365_n covax_post30_n fluvax_post30_n, replace
 ds prior_* *365 *_within_365d index_spell_* index_primary_hip index_hip_* reg_2y_at_index *_index_day *_during_spell neg_con_1 death_dates_disagree
 foreach var of varlist `r(varlist)' {
-    capture destring `var', replace
+    assert inlist(`var', "", "T", "F", "1", "0")
+    quietly replace `var' = "1" if `var' == "T"
+    quietly replace `var' = "0" if `var' == "F"
+    destring `var', replace
 }
 gen double death_date = all_cause_death_date
 gen double covax_most_recent_date = covax_most_recent_before_index
