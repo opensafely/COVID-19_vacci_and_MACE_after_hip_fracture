@@ -7,7 +7,7 @@ actions:
 
   generate_dataset:
     run: ehrql:v1 generate-dataset analysis/dataset_definition.py
-      --dummy-tables dummy-tables
+      --dummy-tables dummy-tables/small
       --test-data-file analysis/test_dataset_definition.py
       --output output/dataset.csv
     outputs:

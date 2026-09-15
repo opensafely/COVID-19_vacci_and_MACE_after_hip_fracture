@@ -34,21 +34,25 @@ Start Docker Desktop, then run from the repository root:
 
 ```sh
 opensafely codelists check
-opensafely run run_all
+opensafely run -f run_all
 ```
 
+The `-f` flag forces a fresh run instead of reusing completed dependency outputs.
 This is the required local integration test: it runs the same declared images,
 entry points, dependencies and outputs as the project workflow. To rerun selected
 stages and their prerequisites after a change:
 
 ```sh
-opensafely run prepare_cohort
-opensafely run describe_cohort plot_vaccination_timing
+opensafely run -f prepare_cohort
+opensafely run -f describe_cohort plot_vaccination_timing
 opensafely run test_preparation
 opensafely run test_quality_gate
 ```
 
-`--dummy-tables` supplies local synthetic records. The secure backend supplies
+`--dummy-tables dummy-tables/small` supplies a fixed 1,000-patient synthetic sample
+for routine tests. All events for each selected patient are retained. The full
+12,000-patient fixture remains in `dummy-tables/`; the small sample is rebuilt with
+`python analysis/build_small_dummy_tables.py`. The secure backend supplies
 real tables without editing the workflow; the researcher submits actual data
 runs through the OpenSAFELY workspace. Synthetic records are not patient data and
 do not estimate clinical feasibility.
