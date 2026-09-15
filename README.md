@@ -20,7 +20,7 @@ disclosure-ready result is supplied by this branch.
 | Internal quality checks | `analysis/audit_dataset.py` | `output/quality/` |
 | Stata preparation | `analysis/derive_covariates.do` | `output/analytical_cohort.dta` |
 | Timing histograms | `analysis/histograms.do` | Three pre-fracture timing SVGs |
-| Codelist audit | `analysis/audit_codelists.py` | `codelists/inventory.csv` |
+| Codelist audit | `analysis/audit_codelists.py` | `codelists/audit/inventory.csv` |
 
 The full declared workflow is in `project.yaml`. Histograms, counts and validation
 outputs are **highly sensitive** until an explicit disclosure process is added.

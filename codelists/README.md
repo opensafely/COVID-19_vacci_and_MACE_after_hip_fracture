@@ -6,7 +6,7 @@ necessarily been accepted for the final phenotype or analysis.
 ## Provenance and inventory
 
 - `codelists.json` retains the original OpenCodelists version URLs and download metadata.
-- `inventory.csv` records all 43 downloaded files, code counts, code columns,
+- `audit/inventory.csv` records all 43 downloaded files, code counts, code columns,
   references in the analysis, and SHA-256 hashes of the local files.
 - Rebuild it from the repository root with `python analysis/audit_codelists.py`.
   The inventory is a structural audit, not a clinical validation.
