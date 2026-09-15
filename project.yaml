@@ -26,7 +26,7 @@ actions:
         checks: output/quality/validation_errors.csv
 
   generate_analysis_dataset:
-    run: stata-mp:v2 analysis/derive_covariates.do
+    run: stata-mp:v1 analysis/derive_covariates.do
     needs: [generate_dataset, audit_dataset]
     outputs:
       highly_sensitive:
@@ -36,7 +36,7 @@ actions:
 
 
   generate_histograms:
-    run: stata-mp:v2 analysis/histograms.do
+    run: stata-mp:v1 analysis/histograms.do
     needs : [generate_dataset, generate_analysis_dataset]
     outputs:
       highly_sensitive:
