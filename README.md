@@ -6,75 +6,87 @@ Research question: how is the timing of COVID-19 vaccination around hip fracture
 associated with subsequent major adverse cardiac events? Influenza vaccination
 provides a secondary comparison.
 
-## Current status: feasibility foundation
+## Current status: R feasibility foundation
 
-The repository retains the original ehrQL and Stata approach, with explicit
-extraction, quality checks and preparation stages. Clinical definitions and the
-statistical analysis plan are still being developed. No effectiveness model or
-disclosure-ready result is supplied by this branch.
+The active workflow uses ehrQL for extraction, a Python quality gate, and **R for
+preparation, tables and figures**, following the staged IDAIRE BSI structure.
+Clinical definitions and the statistical analysis plan are still being developed.
+No effectiveness model or disclosure-ready result is supplied by this branch.
 
 | Stage | Entry point | Output |
 |---|---|---|
-| Configuration | `analysis/study_config.py` | Provisional dates and vaccination target values |
+| Configuration | `analysis/study_config.py` | Provisional dates and vaccination targets |
 | Extraction | `analysis/dataset_definition.py` | `output/dataset.csv` |
 | Internal quality checks | `analysis/audit_dataset.py` | `output/quality/` |
-| Stata preparation | `analysis/derive_covariates.do` | `output/analytical_cohort.dta` |
-| Timing histograms | `analysis/histograms.do` | Three pre-fracture timing SVGs |
+| R preparation | `analysis/prepare_cohort.R` | `output/analytical_cohort.rds` |
+| Descriptive tables | `analysis/describe_cohort.R` | `output/tables/` |
+| Pre/post-fracture timing figures | `analysis/plot_vaccination_timing.R` | `output/figures/` |
+| R preparation tests | `analysis/test_prepare_cohort.R` | `output/logs/test_prepare_cohort.txt` |
 | Codelist audit | `analysis/audit_codelists.py` | `codelists/audit/inventory.csv` |
 
-The full declared workflow is in `project.yaml`. Histograms, counts and validation
-outputs are **highly sensitive** until an explicit disclosure process is added.
+Shared R functions are in `analysis/lib/cohort.R`. The active R dependency for
+plotting is ggplot2, supplied by `r:v2`; preparation and tables use base R. Original
+Stata scripts are preserved in `analysis/legacy/` for reference.
 
-## Run and check
+## Run locally with OpenSAFELY
 
-With Docker and the relevant OpenSAFELY images available:
-
-```sh
-opensafely run audit_dataset
-opensafely run generate_histograms
-```
-
-The first command runs extraction and its quality gate. The second additionally
-requires the Stata image. `--dummy-tables` supplies local synthetic data; the
-secure backend supplies real tables without editing the workflow. These fixture
-tables contain artificial records, not patient data or estimates of feasibility.
-
-Standalone checks with an installed ehrQL environment:
+Start Docker Desktop, then run from the repository root:
 
 ```sh
-ehrql assure analysis/test_dataset_definition.py
-python -m pytest analysis/test_audit_dataset.py
-python analysis/audit_codelists.py
+opensafely codelists check
+opensafely run run_all
 ```
 
-The dataset assurance file is also run before each `generate_dataset` action.
-It covers eligibility, vaccine-window boundaries, doses beyond the six-date
-display, duplicate administration dates, competing deaths, deregistration and
-same-spell outcome ambiguity.
+This is the required local integration test: it runs the same declared images,
+entry points, dependencies and outputs as the project workflow. To rerun selected
+stages and their prerequisites after a change:
+
+```sh
+opensafely run prepare_cohort
+opensafely run describe_cohort plot_vaccination_timing
+opensafely run test_preparation
+opensafely run test_quality_gate
+```
+
+`--dummy-tables` supplies local synthetic records. The secure backend supplies
+real tables without editing the workflow; the researcher submits actual data
+runs through the OpenSAFELY workspace. Synthetic records are not patient data and
+do not estimate clinical feasibility.
+
+The ehrQL assurance file runs before each extraction. It covers eligibility,
+vaccine-window boundaries, doses beyond the six-date display, duplicate dates,
+deaths, deregistration and same-spell outcome ambiguity. The R test action checks
+exposure boundaries, date parsing, exact identifiers, clinical code preservation,
+missingness and zero follow-up. Four quality-gate rejection cases also run through
+the `test_quality_gate` action. Both test actions are included in `run_all`.
+
+Histograms, counts, logs and tables are **highly sensitive**. They contain
+unsuppressed values; release processing must be added before creating publishable
+outputs. `table1_feasibility.csv` is a long-format audit table, not a finished
+manuscript Table 1. No data are dropped merely because covariates are missing.
 
 ## Decisions before effectiveness analysis
 
 - Verify event coverage for every source. Configured dates are provisional;
-  an import date does not establish complete follow-up. In particular, documented
-  ONS availability begins in February 2019.
+  import date does not establish complete follow-up. Documented ONS availability
+  begins in February 2019.
 - Freeze hip fracture, incident MI/stroke, cardiovascular death, trauma, surgery,
   medication and smoking definitions. See [codelist review](codelists/README.md).
-- Distinguish pre-fracture vaccination from post-fracture initiation. Never assign
-  a future vaccination retrospectively at fracture admission.
+- Distinguish pre-fracture vaccination from post-fracture initiation. A future
+  vaccination must not be assigned retrospectively at fracture admission.
 - Restrict comparisons to contemporaneous, vaccine-eligible populations and
   evaluate overlap before fitting models.
-- Review same-spell MACE and transferred admissions: admission date alone does
-  not establish onset within a hospital spell.
-- Review continuous registration and GP/ONS death discrepancies. The current
-  preparation retains missing covariates and zero-follow-up records for audit.
+- Review same-spell MACE and transfers: admission date does not establish onset
+  within a hospital spell.
+- Review continuous registration and GP/ONS death discrepancies. Preparation
+  retains missing covariates and zero-follow-up records for audit.
 - `all_cause_death_date` is the earliest observed GP/ONS death within follow-up;
   source dates are retained separately. Cause attribution uses ONS.
 - The first six distinct vaccination dates are a historical display, not a full
   dose history. Index-relative summaries do not use that cap.
 
-Internal study discussions and correspondence are kept outside the public code
-repository. `/doc/`, `/docs/` and `/private/` are ignored, following the existing
-IDAIRE BSI workspace convention.
+Internal study discussions and correspondence are outside the public repository.
+`/doc/`, `/docs/` and `/private/` are ignored, following the IDAIRE BSI convention.
 
 ## Transparency
 

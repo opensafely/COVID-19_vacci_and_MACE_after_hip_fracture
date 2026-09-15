@@ -25,21 +25,40 @@ actions:
         counts: output/quality/feasibility_counts.csv
         checks: output/quality/validation_errors.csv
 
-  generate_analysis_dataset:
-    run: stata-mp:v1 analysis/derive_covariates.do
+  prepare_cohort:
+    run: r:v2 analysis/prepare_cohort.R
     needs: [generate_dataset, audit_dataset]
     outputs:
       highly_sensitive:
-        log: output/define_covariates.log
-        dataset: output/analytical_cohort.dta
+        log: output/logs/prepare_cohort.txt
+        dataset: output/analytical_cohort.rds
 
-
-
-  generate_histograms:
-    run: stata-mp:v1 analysis/histograms.do
-    needs : [generate_dataset, generate_analysis_dataset]
+  describe_cohort:
+    run: r:v2 analysis/describe_cohort.R
+    needs: [prepare_cohort]
     outputs:
       highly_sensitive:
-        Figures1: output/days_since_last_anyvax.svg
-        Figures2: output/days_since_last_covax.svg
-        Figures3: output/days_since_last_fluvax.svg
+        baseline: output/tables/table1_feasibility.csv
+        vaccination: output/tables/vaccination_by_year.csv
+        missingness: output/tables/missingness.csv
+        post_fracture: output/tables/post_fracture_vaccination.csv
+
+  plot_vaccination_timing:
+    run: r:v2 analysis/plot_vaccination_timing.R
+    needs: [prepare_cohort]
+    outputs:
+      highly_sensitive:
+        before: output/figures/vaccination_before_fracture.png
+        after: output/figures/vaccination_after_fracture.png
+
+  test_preparation:
+    run: r:v2 analysis/test_prepare_cohort.R
+    outputs:
+      highly_sensitive:
+        log: output/logs/test_prepare_cohort.txt
+
+  test_quality_gate:
+    run: python:v2 python analysis/test_audit_dataset.py
+    outputs:
+      highly_sensitive:
+        log: output/logs/test_quality_gate.txt

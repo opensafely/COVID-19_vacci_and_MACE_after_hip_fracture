@@ -1,6 +1,8 @@
-"""The quality gate must reject implausible exported records."""
+"""Reject invalid exported records; run with opensafely run test_quality_gate."""
 import csv
-import pytest
+import tempfile
+import unittest
+from pathlib import Path
 from audit_dataset import audit
 
 
@@ -17,19 +19,31 @@ def row():
     return data
 
 
-@pytest.mark.parametrize("changes,duplicate,error", [
-    ({"mi_date":"2024-01-02", "mace_date":"2024-01-02"}, False, "out_of_followup_mi"),
-    ({"mi_date":"2023-02-01"}, False, "mace_not_earliest_component"),
-    ({"covax_post30_date":"2023-01-01"}, False, "invalid_post30_covax"),
-    ({}, True, "duplicate_patient_id"),
-])
-def test_rejects_invalid_export(tmp_path, changes, duplicate, error):
-    record = row() | changes
-    path = tmp_path / "dataset.csv"
-    with path.open("w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=list(record))
-        writer.writeheader()
-        writer.writerows([record] * (2 if duplicate else 1))
-    with pytest.raises(ValueError, match="Dataset failed"):
-        audit(path, tmp_path / "quality")
-    assert error in (tmp_path / "quality/validation_errors.csv").read_text()
+class TestQualityGate(unittest.TestCase):
+    def test_rejects_invalid_exports(self):
+        cases = [
+            ({"mi_date": "2024-01-02", "mace_date": "2024-01-02"}, False, "out_of_followup_mi"),
+            ({"mi_date": "2023-02-01"}, False, "mace_not_earliest_component"),
+            ({"covax_post30_date": "2023-01-01"}, False, "invalid_post30_covax"),
+            ({}, True, "duplicate_patient_id"),
+        ]
+        for changes, duplicate, error in cases:
+            with self.subTest(check=error), tempfile.TemporaryDirectory() as tmp:
+                tmp_path = Path(tmp)
+                record = row() | changes
+                path = tmp_path / "dataset.csv"
+                with path.open("w", newline="") as f:
+                    writer = csv.DictWriter(f, fieldnames=list(record))
+                    writer.writeheader()
+                    writer.writerows([record] * (2 if duplicate else 1))
+                with self.assertRaisesRegex(ValueError, "Dataset failed"):
+                    audit(path, tmp_path / "quality")
+                self.assertIn(error, (tmp_path / "quality/validation_errors.csv").read_text())
+
+
+if __name__ == "__main__":
+    result = unittest.main(exit=False).result
+    if not result.wasSuccessful():
+        raise SystemExit(1)
+    Path("output/logs").mkdir(parents=True, exist_ok=True)
+    Path("output/logs/test_quality_gate.txt").write_text("PASS: all four quality-gate rejection cases\n")
