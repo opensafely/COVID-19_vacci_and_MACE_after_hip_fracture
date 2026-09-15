@@ -17,7 +17,7 @@ def base():
         "apcs": [admission()],
         "practice_registrations": [{"start_date": D("2010-01-01"),
                                     "end_date": None, "practice_pseudo_id": 1}],
-        "ons_deaths": [], "clinical_events": [], "vaccinations": [],
+        "ons_deaths": [], "clinical_events": [], "vaccinations": [], "medications": [],
         "addresses": [], "ethnicity_from_sus": [], "sgss_covid_all_tests": [],
         "expected_in_population": True,
         "expected_columns": {"index_date": INDEX, "age": 73, "mace365": False},
@@ -110,3 +110,33 @@ p["patients"]["date_of_death"]=end
 p["ons_deaths"]=[{"date":end+timedelta(days=1),"underlying_cause_of_death":"C349"}]
 p["expected_columns"].update(death_dates_disagree=True,all_cause_death_date=end,followup_end_date=end)
 test_data[27]=p
+
+# Missing admission fields are retained for review when fracture evidence exists.
+p=base();p["apcs"][0]["admission_method"]=None
+p["expected_columns"].update(index_admission_method_missing=True);test_data[28]=p
+p=base();p["apcs"][0].update(all_diagnoses=None, primary_diagnosis=None, all_procedures="W241")
+p["expected_columns"].update(index_hip_diagnosis=False,index_hip_procedure=True,index_diagnoses_missing=True)
+test_data[29]=p
+p=base();p["apcs"][0]["admission_method"]="11";p["expected_in_population"]=False;test_data[30]=p
+p=base();p["apcs"][0]["all_diagnoses"]="S720 || V010";p["expected_in_population"]=False;test_data[31]=p
+# Arterial and venous codes must remain distinguishable for clinical review.
+for ident, code, arterial, venous in [(32,"I636",False,True),(33,"I639",True,False),(34,"I64",False,False)]:
+    p=base(); event=INDEX+timedelta(days=15)
+    p["apcs"].append(admission(event,code,ident=2))
+    p["expected_columns"].update(mace365=True,stroke_arterial_ischaemic_hospital_date=event if arterial else None,
+        stroke_venous_infarction_hospital_date=event if venous else None,
+        stroke_unspecified_hospital_date=event if code=="I64" else None)
+    test_data[ident]=p
+# Chapter I death not captured by the original MI/stroke-only outcome is preserved.
+p=base(); death=INDEX+timedelta(days=5)
+p["ons_deaths"]=[{"date":death,"underlying_cause_of_death":"I500"}]
+p["expected_columns"].update(cvddeath_date=None,ons_underlying_cause_of_death="I500");test_data[35]=p
+p=base(); death=INDEX+timedelta(days=366)
+p["ons_deaths"]=[{"date":death,"underlying_cause_of_death":"I500"}]
+p["expected_columns"].update(ons_underlying_cause_of_death=None);test_data[36]=p
+# Secondary sort gives a reproducible selection among same-date spells.
+p=base();p["apcs"]=[admission(codes="S729",ident=2),admission(codes="S720",ident=1)]
+p["expected_columns"].update(index_hip_strict=True,index_hip_unspecified=False);test_data[37]=p
+# Events during the original stay and after discharge are separate diagnostics.
+p=base();p["apcs"] += [admission(INDEX+timedelta(days=3),"I210",ident=2),admission(INDEX+timedelta(days=12),"I210",ident=3)]
+p["expected_columns"].update(mace365=True,mi_hospital_date=INDEX+timedelta(days=3),mi_after_discharge_date=INDEX+timedelta(days=12));test_data[38]=p

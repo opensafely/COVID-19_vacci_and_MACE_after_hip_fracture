@@ -62,3 +62,35 @@ actions:
     outputs:
       highly_sensitive:
         log: output/logs/test_quality_gate.txt
+
+  generate_screening:
+    run: ehrql:v1 generate-dataset analysis/screening_dataset.py
+      --dummy-tables dummy-tables/small
+      --test-data-file analysis/test_screening.py
+      --output output/screening.csv
+    outputs:
+      highly_sensitive:
+        dataset: output/screening.csv
+
+  generate_source_activity:
+    run: ehrql:v1 generate-measures analysis/source_activity_measures.py
+      --dummy-tables dummy-tables/small
+      --output output/source_activity.csv
+    outputs:
+      highly_sensitive:
+        measures: output/source_activity.csv
+
+  feasibility_report:
+    run: r:v2 analysis/feasibility_report.R
+    needs: [prepare_cohort, generate_screening, generate_source_activity]
+    outputs:
+      highly_sensitive:
+        tables: output/feasibility/*.csv
+        figure: output/feasibility/source_activity.png
+
+  test_feasibility:
+    run: r:v2 analysis/test_feasibility.R
+    needs: [prepare_cohort, generate_screening, generate_source_activity]
+    outputs:
+      highly_sensitive:
+        log: output/logs/test_feasibility.txt

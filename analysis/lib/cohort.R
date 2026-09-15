@@ -57,10 +57,13 @@ prepare_cohort <- function(path) {
   for (name in date_columns) d[[name]] <- parse_iso_date(d[[name]], name)
   numeric_columns <- intersect(c("age", "bmi", "imd_quintile", "covax_prior365_n",
                                  "fluvax_prior365_n", "covax_post30_n", "fluvax_post30_n"), names(d))
+  numeric_columns <- union(numeric_columns, grep("_n$", names(d), value = TRUE))
   for (name in numeric_columns) d[[name]] <- parse_number(d[[name]], name)
   flag_columns <- grep(paste0("^prior_|365$|_within_365d$|^index_spell_|^index_hip_|",
                              "^index_primary_hip$|^reg_2y_at_index$|_index_day$|",
                              "_during_spell$|^neg_con_1$|^death_dates_disagree$"), names(d), value = TRUE)
+  flag_columns <- union(flag_columns, intersect(c("index_diagnoses_missing", "index_admission_method_missing", "index_fall_W11_W17"), names(d)))
+  flag_columns <- setdiff(flag_columns, numeric_columns)
   for (name in flag_columns) d[[name]] <- parse_flag(d[[name]], name)
 
   if (anyNA(d$index_date) || anyNA(d$followup_end_date) || anyNA(d$admin_end_date)) {
@@ -105,7 +108,7 @@ prepare_cohort <- function(path) {
   d$ethnicity <- d$ethnicity6
   d$ethnicity[is.na(d$ethnicity) | d$ethnicity == "Missing"] <- "Missing"
   d$smoking <- factor(d$smoking_status, levels = c("N", "E", "S"),
-                      labels = c("Never", "Former", "Current"))
+                      labels = c("Legacy N: review required", "Legacy E: review required", "Legacy S: review required"))
   d$followup_days <- as.numeric(d$followup_end_date - d$index_date)
   d$positive_followup <- d$followup_days > 0
   d$observed_30_days <- d$followup_days >= 30

@@ -47,7 +47,7 @@ distributions <- list()
 for (vaccine in c("covax", "fluvax")) {
   tab <- as.data.frame(table(index_year = d$index_year, group = d[[paste0(vaccine, "_cat")]]))
   names(tab)[3] <- "n"
-  tab$vaccine <- vaccine
+  tab$vaccine <- rep(vaccine, nrow(tab))
   distributions[[length(distributions) + 1L]] <- tab
 }
 write_internal_csv(do.call(rbind, distributions), file.path(opts$output, "vaccination_by_year.csv"))

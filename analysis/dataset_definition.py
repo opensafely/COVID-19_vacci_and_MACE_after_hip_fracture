@@ -72,83 +72,11 @@ dataset.configure_dummy_data(
 # Identify hip fractures from APCS (SUS)
 ##########################################################################
 
-# All hip fracture admissions in the study window
-# Diagnosis OR procedure for hip fracture
-# Exclude: transport accidents, elective admissions
-hip_fracture_admissions = (
-    apcs
-    .where(apcs.admission_date.is_on_or_between(study_start_date, study_end_date))
-    .where(
-        apcs.all_diagnoses.contains_any_of(codelists.hip_fracture_icd10_codes_expanded)
-        | apcs.all_procedures.contains_any_of(codelists.hip_fracture_opcs4)
-    )
-    .where(
-        # Exclude transport accidents (V01-V99)
-        ~apcs.all_diagnoses.contains(codelists.transport_accident_prefix)
-    )
-    .where(
-        # Exclude elective admissions (11, 12, 13)
-        ~apcs.admission_method.is_in(codelists.elective_admission_methods)
-    )
+from cohort_definition import (
+    first_hf, age_at_index, current_reg, eligible_population,
+    gp_death_date, ons_death_date, admin_end_date, followup_end,
 )
-
-# First hip fracture per patient in the study window
-first_hf = (
-    hip_fracture_admissions
-    .sort_by(apcs.admission_date)
-    .first_for_patient()
-)
-
-# Check ALL permitted history before the selected index, not just 2017-2018.
-# This identifies first recorded fracture since HISTORY_START, not lifetime first.
-has_prior_hf = (
-    apcs
-    .where(apcs.admission_date.is_on_or_between(lookback_start, first_hf.admission_date - days(1)))
-    .where(
-        apcs.all_diagnoses.contains_any_of(codelists.hip_fracture_icd10_codes_expanded)
-        | apcs.all_procedures.contains_any_of(codelists.hip_fracture_opcs4)
-    )
-    .exists_for_patient()
-)
-
-
-##########################################################################
-# Define study population
-##########################################################################
-
-age_at_index = patients.age_on(first_hf.admission_date)
-
-# Must be registered with a TPP GP at the index date
-registered_at_index = (
-    practice_registrations
-    .where(practice_registrations.start_date <= first_hf.admission_date)
-    .except_where(practice_registrations.end_date < first_hf.admission_date)
-    .exists_for_patient()
-)
-
-dataset.define_population(
-    first_hf.admission_date.is_not_null()   # Has a hip fracture in study window
-    & ~has_prior_hf                          # No earlier recorded fracture since 2017
-    & (age_at_index >= 50)                   # Age >= 50 at index
-    & registered_at_index                    # Registered with TPP GP at index
-    & (patients.date_of_death.is_null() | (patients.date_of_death >= first_hf.admission_date))
-    & (ons_deaths.date.is_null() | (ons_deaths.date >= first_hf.admission_date))
-    & patients.sex.is_in(["female", "male"]) # Known sex
-)
-
-
-##########################################################################
-# POPULATION VARIABLES
-##########################################################################
-
-# Current registration spanning the index date
-current_reg = (
-    practice_registrations
-    .where(practice_registrations.start_date <= first_hf.admission_date)
-    .except_where(practice_registrations.end_date < first_hf.admission_date)
-    .sort_by(practice_registrations.start_date)
-    .last_for_patient()
-)
+dataset.define_population(eligible_population)
 
 dataset.gp_registration_start = current_reg.start_date
 dataset.index_date = first_hf.admission_date
@@ -171,21 +99,13 @@ dataset.surgery_type = case(
 dataset.dereg_date = current_reg.end_date
 
 # Keep both death sources within the extraction window. ONS supplies cause.
-dataset.gp_death_date = case(
-    when(patients.date_of_death <= data_end_date).then(patients.date_of_death)
-)
-dataset.ons_death_date = case(
-    when(ons_deaths.date <= data_end_date).then(ons_deaths.date)
-)
+dataset.gp_death_date = gp_death_date
+dataset.ons_death_date = ons_death_date
 dataset.death_dates_disagree = (
-    dataset.gp_death_date.is_not_null() & dataset.ons_death_date.is_not_null()
-    & (dataset.gp_death_date != dataset.ons_death_date)
+    gp_death_date.is_not_null() & ons_death_date.is_not_null()
+    & (gp_death_date != ons_death_date)
 )
-dataset.admin_end_date = minimum_of(first_hf.admission_date + days(365), data_end_date)
-followup_end = minimum_of(
-    dataset.admin_end_date, current_reg.end_date,
-    dataset.ons_death_date, dataset.gp_death_date,
-)
+dataset.admin_end_date = admin_end_date
 dataset.followup_end_date = followup_end
 dataset.reg_2y_at_index = current_reg.start_date <= first_hf.admission_date - years(2)
 
@@ -309,6 +229,7 @@ mi_gp = first_event_after_snomed(
 
 dataset.mi_hospital_date = mi_hospital.admission_date
 dataset.mi_gp_date = mi_gp.date
+dataset.mi_gp_first_code = mi_gp.snomedct_code
 dataset.mi_date = minimum_of(mi_hospital.admission_date, mi_gp.date)
 dataset.mi365 = dataset.mi_date.is_not_null()
 
@@ -330,6 +251,7 @@ stroke_gp = first_event_after_snomed(
 
 dataset.stroke_hospital_date = stroke_hospital.admission_date
 dataset.stroke_gp_date = stroke_gp.date
+dataset.stroke_gp_first_code = stroke_gp.snomedct_code
 dataset.stroke_date = minimum_of(stroke_hospital.admission_date, stroke_gp.date)
 dataset.stroke365 = dataset.stroke_date.is_not_null()
 
@@ -591,3 +513,44 @@ dataset.covid_positive_before_index = (
     .last_for_patient()
     .specimen_taken_date
 )
+
+
+# Feasibility diagnostics do not replace the provisional primary definitions.
+dataset.registration_records_at_index_n = practice_registrations.spanning(
+    first_hf.admission_date, first_hf.admission_date
+).count_for_patient()
+dataset.practice_go_live_date = current_reg.practice_systmone_go_live_date
+dataset.index_hip_diagnosis = first_hf.all_diagnoses.contains_any_of(
+    codelists.hip_fracture_icd10_codes_expanded
+).when_null_then(False)
+dataset.index_hip_procedure = first_hf.all_procedures.contains_any_of(codelists.hip_fracture_opcs4).when_null_then(False)
+dataset.index_diagnoses_missing = first_hf.all_diagnoses.is_null()
+dataset.index_admission_method_missing = first_hf.admission_method.is_null()
+dataset.index_fall_W11_W17 = first_hf.all_diagnoses.contains_any_of([f"W{i}" for i in range(11, 18)]).when_null_then(False)
+for name, prefixes in {
+    "arterial_ischaemic": ["I630", "I631", "I632", "I633", "I634", "I635", "I638", "I639"],
+    "haemorrhagic": ["I60", "I61"],
+    "unspecified": ["I64"],
+    "venous_infarction": ["I636"],
+}.items():
+    event = first_admission_with_diagnosis(prefixes, first_hf.admission_date, followup_end)
+    dataset.add_column(f"stroke_{name}_hospital_date", event.admission_date)
+for name, codes in [("mi", codelists.mi_icd10_codes_expanded), ("stroke", codelists.stroke_icd10_codes_expanded)]:
+    event = first_admission_with_diagnosis(codes, first_hf.discharge_date, followup_end)
+    dataset.add_column(f"{name}_after_discharge_date", event.admission_date)
+    dataset.add_column(f"prior_{name}_hospital", has_prior_admission_with_diagnosis(codes, first_hf.admission_date))
+# Certificate codes are available only for a death within observed follow-up,
+# including day 0 for diagnostics. R compares chapter I and MI/stroke definitions.
+observed_ons_death = ons_deaths.date.is_on_or_between(first_hf.admission_date, followup_end)
+for field in ["underlying_cause_of_death"] + [f"cause_of_death_{i:02}" for i in range(1, 16)]:
+    dataset.add_column(f"ons_{field}", case(when(observed_ons_death).then(getattr(ons_deaths, field))))
+dataset.smoking_last_code = latest_smoking_code
+# Generic recording availability, not medication-class ascertainment.
+prior_year_clinical = clinical_events.where(clinical_events.date.is_on_or_between(
+    first_hf.admission_date - days(365), first_hf.admission_date - days(1)))
+prior_year_medications = medications.where(medications.date.is_on_or_between(
+    first_hf.admission_date - days(365), first_hf.admission_date - days(1)))
+dataset.prior_year_clinical_records_n = prior_year_clinical.count_for_patient()
+dataset.prior_year_medication_records_n = prior_year_medications.count_for_patient()
+
+dataset.index_same_day_spells_n = apcs.where(apcs.admission_date == first_hf.admission_date).count_for_patient()
