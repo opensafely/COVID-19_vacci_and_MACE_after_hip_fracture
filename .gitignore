@@ -10,3 +10,9 @@ venv/
 .Rhistory
 .Rproj.user/
 .devcontainer/ehrql-main/
+
+.pytest_cache/
+# Follow IDAIRE BSI: internal study discussions stay local.
+/docs/
+/doc/
+/private/

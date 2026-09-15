@@ -43,17 +43,18 @@ from variable_lib import (
     rural_urban_5,
     get_ethnicity6,
 )
-from vaccine_history import add_vaccine_history
+from vaccine_history import add_vaccine_history, add_index_vaccine_summary
+from study_config import STUDY_START, STUDY_END, DATA_END, HISTORY_START, COVID_TARGET, FLU_TARGET
 
 
 ##########################################################################
 # Study dates
 ##########################################################################
 
-study_start_date = date(2019, 1, 1)     # Earliest hip fracture inclusion date
-study_end_date = date(2025, 1, 1)       # Latest hip fracture inclusion date
-data_end_date = date(2026, 1, 1)        # End of follow-up / data availability
-lookback_start = date(2017, 1, 1)       # 2-year lookback for prior hip fracture
+study_start_date = STUDY_START
+study_end_date = STUDY_END
+data_end_date = DATA_END
+lookback_start = HISTORY_START
 
 
 ##########################################################################
@@ -98,10 +99,11 @@ first_hf = (
     .first_for_patient()
 )
 
-# Check for prior hip fracture in 2-year lookback (exclusion if present)
+# Check ALL permitted history before the selected index, not just 2017-2018.
+# This identifies first recorded fracture since HISTORY_START, not lifetime first.
 has_prior_hf = (
     apcs
-    .where(apcs.admission_date.is_on_or_between(lookback_start, study_start_date - days(1)))
+    .where(apcs.admission_date.is_on_or_between(lookback_start, first_hf.admission_date - days(1)))
     .where(
         apcs.all_diagnoses.contains_any_of(codelists.hip_fracture_icd10_codes_expanded)
         | apcs.all_procedures.contains_any_of(codelists.hip_fracture_opcs4)
@@ -126,9 +128,11 @@ registered_at_index = (
 
 dataset.define_population(
     first_hf.admission_date.is_not_null()   # Has a hip fracture in study window
-    & ~has_prior_hf                          # No prior hip fracture in lookback
+    & ~has_prior_hf                          # No earlier recorded fracture since 2017
     & (age_at_index >= 50)                   # Age >= 50 at index
     & registered_at_index                    # Registered with TPP GP at index
+    & (patients.date_of_death.is_null() | (patients.date_of_death >= first_hf.admission_date))
+    & (ons_deaths.date.is_null() | (ons_deaths.date >= first_hf.admission_date))
     & patients.sex.is_in(["female", "male"]) # Known sex
 )
 
@@ -166,6 +170,33 @@ dataset.surgery_type = case(
 # Deregistration date (for censoring)
 dataset.dereg_date = current_reg.end_date
 
+# Keep both death sources within the extraction window. ONS supplies cause.
+dataset.gp_death_date = case(
+    when(patients.date_of_death <= data_end_date).then(patients.date_of_death)
+)
+dataset.ons_death_date = case(
+    when(ons_deaths.date <= data_end_date).then(ons_deaths.date)
+)
+dataset.death_dates_disagree = (
+    dataset.gp_death_date.is_not_null() & dataset.ons_death_date.is_not_null()
+    & (dataset.gp_death_date != dataset.ons_death_date)
+)
+dataset.admin_end_date = minimum_of(first_hf.admission_date + days(365), data_end_date)
+followup_end = minimum_of(
+    dataset.admin_end_date, current_reg.end_date,
+    dataset.ons_death_date, dataset.gp_death_date,
+)
+dataset.followup_end_date = followup_end
+dataset.reg_2y_at_index = current_reg.start_date <= first_hf.admission_date - years(2)
+
+# These flags preserve uncertainty about diagnoses within the index spell.
+# Admission date does not establish when a MI/stroke began within that spell.
+dataset.index_spell_mi = first_hf.all_diagnoses.contains_any_of(codelists.mi_icd10_codes_expanded)
+dataset.index_spell_stroke = first_hf.all_diagnoses.contains_any_of(codelists.stroke_icd10_codes_expanded)
+dataset.index_primary_hip = first_hf.primary_diagnosis.is_in(codelists.hip_fracture_icd10_codes)
+dataset.index_hip_strict = first_hf.all_diagnoses.contains_any_of(["S720", "S721", "S722"])
+dataset.index_hip_unspecified = first_hf.all_diagnoses.contains("S729")
+
 
 ##########################################################################
 # EXPOSURE: COVID-19 VACCINATION HISTORY
@@ -175,19 +206,21 @@ dataset.dereg_date = current_reg.end_date
 add_vaccine_history(
     dataset,
     index_date=first_hf.admission_date,
-    target_disease="SARS-2 Coronavirus",
+    target_disease=COVID_TARGET,
     prefix="covax",
     number_of_vaccines=6,
+    start_date=lookback_start,
+    end_date=followup_end,
 )
 
 # Binary: had a COVID-19 vaccine within 365 days before index?
 dataset.covax_within_365d = (
     vaccinations
-    .where(vaccinations.target_disease == "SARS-2 Coronavirus")
+    .where(vaccinations.target_disease == COVID_TARGET)
     .where(
         vaccinations.date.is_on_or_between(
             first_hf.admission_date - days(365),
-            first_hf.admission_date,
+            first_hf.admission_date - days(1),
         )
     )
     .exists_for_patient()
@@ -196,8 +229,9 @@ dataset.covax_within_365d = (
 # Most recent COVID vaccine before index (for timing analysis)
 dataset.covax_most_recent_before_index = (
     vaccinations
-    .where(vaccinations.target_disease == "SARS-2 Coronavirus")
-    .where(vaccinations.date <= first_hf.admission_date)
+    .where(vaccinations.target_disease == COVID_TARGET)
+    .where(vaccinations.date < first_hf.admission_date)
+    .where(vaccinations.date >= lookback_start)
     .sort_by(vaccinations.date)
     .last_for_patient()
     .date
@@ -212,19 +246,21 @@ dataset.covax_most_recent_before_index = (
 add_vaccine_history(
     dataset,
     index_date=first_hf.admission_date,
-    target_disease="INFLUENZA",
+    target_disease=FLU_TARGET,
     prefix="fluvax",
     number_of_vaccines=6,
+    start_date=lookback_start,
+    end_date=followup_end,
 )
 
 # Binary: had a flu vaccine within 365 days before index?
 dataset.fluvax_within_365d = (
     vaccinations
-    .where(vaccinations.target_disease == "INFLUENZA")
+    .where(vaccinations.target_disease == FLU_TARGET)
     .where(
         vaccinations.date.is_on_or_between(
             first_hf.admission_date - days(365),
-            first_hf.admission_date,
+            first_hf.admission_date - days(1),
         )
     )
     .exists_for_patient()
@@ -233,8 +269,9 @@ dataset.fluvax_within_365d = (
 # Most recent flu vaccine before index
 dataset.fluvax_most_recent_before_index = (
     vaccinations
-    .where(vaccinations.target_disease == "INFLUENZA")
-    .where(vaccinations.date <= first_hf.admission_date)
+    .where(vaccinations.target_disease == FLU_TARGET)
+    .where(vaccinations.date < first_hf.admission_date)
+    .where(vaccinations.date >= lookback_start)
     .sort_by(vaccinations.date)
     .last_for_patient()
     .date
@@ -245,9 +282,13 @@ dataset.fluvax_most_recent_before_index = (
 # OUTCOMES
 ##########################################################################
 
-# Follow-up end date (365 days after index)
-# (Defined as a local variable for reuse below)
-followup_end = first_hf.admission_date + days(365)
+# Exposure summaries are independent of the historical six-date display cap.
+# Day 0 is recorded separately; a record during a spell is not proof of location.
+for target, prefix in [(COVID_TARGET, "covax"), (FLU_TARGET, "fluvax")]:
+    add_index_vaccine_summary(dataset, first_hf.admission_date,
+                              first_hf.discharge_date, followup_end, target, prefix)
+
+# All outcomes are constrained to observed follow-up, including death and deregistration.
 
 # ----- MI -----
 # Hospital (ICD-10, using all_diagnoses for broad capture)
@@ -266,6 +307,8 @@ mi_gp = first_event_after_snomed(
     before_date=followup_end,
 )
 
+dataset.mi_hospital_date = mi_hospital.admission_date
+dataset.mi_gp_date = mi_gp.date
 dataset.mi_date = minimum_of(mi_hospital.admission_date, mi_gp.date)
 dataset.mi365 = dataset.mi_date.is_not_null()
 
@@ -285,6 +328,8 @@ stroke_gp = first_event_after_snomed(
     before_date=followup_end,
 )
 
+dataset.stroke_hospital_date = stroke_hospital.admission_date
+dataset.stroke_gp_date = stroke_gp.date
 dataset.stroke_date = minimum_of(stroke_hospital.admission_date, stroke_gp.date)
 dataset.stroke365 = dataset.stroke_date.is_not_null()
 
@@ -316,8 +361,12 @@ dataset.mace_date = minimum_of(
 dataset.mace365 = dataset.mace_date.is_not_null()
 
 
-# ----- All-cause death (competing risk) -----
-dataset.all_cause_death_date = ons_deaths.date
+# ----- All-cause death during observed follow-up (competing risk) -----
+# Retain source dates above so disagreement can be reviewed before modelling.
+first_death_date = minimum_of(dataset.ons_death_date, dataset.gp_death_date)
+dataset.all_cause_death_date = case(
+    when(first_death_date <= followup_end).then(first_death_date)
+)
 
 
 # ----- Negative control: Cataract surgery -----
@@ -419,6 +468,7 @@ bmi_record = (
     clinical_events
     .where(clinical_events.snomedct_code.is_in(codelists.bmi_codes))
     .where(clinical_events.date < first_hf.admission_date)
+    .where(clinical_events.date >= lookback_start)
     .where(clinical_events.date >= first_hf.admission_date - years(2))
     .where(clinical_events.numeric_value.is_not_null())
     .where(
@@ -492,6 +542,7 @@ latest_smoking_code = (
     clinical_events
     .where(clinical_events.snomedct_code.is_in(codelists.smoking_clear_codes))
     .where(clinical_events.date < first_hf.admission_date)
+    .where(clinical_events.date >= lookback_start)
     .sort_by(clinical_events.date)
     .last_for_patient()
     .snomedct_code
@@ -523,6 +574,7 @@ dataset.smoking_status = case(
 dataset.covid_positive_date = (
     sgss_covid_all_tests
     .where(sgss_covid_all_tests.is_positive)
+    .where(sgss_covid_all_tests.specimen_taken_date >= lookback_start)
     .where(sgss_covid_all_tests.specimen_taken_date <= followup_end)
     .sort_by(sgss_covid_all_tests.specimen_taken_date)
     .last_for_patient()
@@ -533,7 +585,8 @@ dataset.covid_positive_date = (
 dataset.covid_positive_before_index = (
     sgss_covid_all_tests
     .where(sgss_covid_all_tests.is_positive)
-    .where(sgss_covid_all_tests.specimen_taken_date <= first_hf.admission_date)
+    .where(sgss_covid_all_tests.specimen_taken_date >= lookback_start)
+    .where(sgss_covid_all_tests.specimen_taken_date < first_hf.admission_date)
     .sort_by(sgss_covid_all_tests.specimen_taken_date)
     .last_for_patient()
     .specimen_taken_date

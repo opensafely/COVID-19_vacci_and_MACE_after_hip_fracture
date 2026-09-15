@@ -22,15 +22,13 @@ use analytical_cohort.dta, clear
 
 
 ***** Calculate n days since most recent vaccination before index by type
-gen days_since_last_covax = index_date_stata - covax_most_recent_date
-gen days_since_last_fluvax = index_date_stata - fluvax_most_recent_date
-gen days_since_last_anyvax = index_date_stata - anyvax_most_recent_date
+* days_since_last_* are derived and checked in derive_covariates.do.
 
 
 ***** Histograms
 foreach var of varlist days_since_last_anyvax days_since_last_covax days_since_last_fluvax {
     histogram `var'
-    graph export `var'.svg
+    graph export `var'.svg, replace
 }
 
 

@@ -2,32 +2,44 @@ version: "5.0"
 
 actions:
 
-# delect --dummy-table row when submitting the code (      --dummy-tables dummy-tables )
+# Dummy tables are used locally; the backend supplies real tables in a secure run.
+# Keep the same workflow for both. This is a feasibility pipeline, not a final model.
 
   generate_dataset:
     run: ehrql:v1 generate-dataset analysis/dataset_definition.py
       --dummy-tables dummy-tables
-      --output output/dataset.csv.gz
+      --test-data-file analysis/test_dataset_definition.py
+      --output output/dataset.csv
     outputs:
       highly_sensitive:
-        dataset: output/dataset.csv.gz
+        dataset: output/dataset.csv
 
 
-  generate_analysis_dataset:
-    run: stata-mp:latest analysis/derive_covariates.do
+  audit_dataset:
+    run: python:v2 python analysis/audit_dataset.py
+      --input output/dataset.csv
+      --output-dir output/quality
     needs: [generate_dataset]
     outputs:
       highly_sensitive:
-        log: logs/define_covariates.log
+        counts: output/quality/feasibility_counts.csv
+        checks: output/quality/validation_errors.csv
+
+  generate_analysis_dataset:
+    run: stata-mp:v2 analysis/derive_covariates.do
+    needs: [generate_dataset, audit_dataset]
+    outputs:
+      highly_sensitive:
+        log: output/define_covariates.log
         dataset: output/analytical_cohort.dta
-## stata-mp:latest works fine when running generate_analysis_dataset, but when running generate_dataset produces error "not supported"
+
 
 
   generate_histograms:
     run: stata-mp:v2 analysis/histograms.do
     needs : [generate_dataset, generate_analysis_dataset]
     outputs:
-      moderately_sensitive:
+      highly_sensitive:
         Figures1: output/days_since_last_anyvax.svg
         Figures2: output/days_since_last_covax.svg
         Figures3: output/days_since_last_fluvax.svg

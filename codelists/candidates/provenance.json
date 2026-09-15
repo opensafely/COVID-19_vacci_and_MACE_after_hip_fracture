@@ -1,0 +1,35 @@
+{
+  "created": "2026-09-15",
+  "candidates": [
+    {
+      "file": "hip-fracture-strict-icd10.csv",
+      "source_file": "user-BillyZhongUOM-hip-fracture-icd-10.csv",
+      "source_version_url": "https://www.opencodelists.org/codelist/user/BillyZhongUOM/hip-fracture-icd-10/0ec29807/",
+      "codes": 3,
+      "status": "DRAFT_REQUIRES_CLINICAL_REVIEW",
+      "active_in_dataset": false,
+      "rationale": "Remove S729 (unspecified femur); diagnosis position and procedure-only inclusion still require review.",
+      "file_sha256": "e34a48ecabe34494d3c79c952b4e9f104be08ccc0afad2c20e971be1f5d2590c"
+    },
+    {
+      "file": "ischaemic-stroke-arterial-icd10.csv",
+      "source_file": "user-BillyZhongUOM-non_fatal_stroke.csv",
+      "source_version_url": "https://www.opencodelists.org/codelist/user/BillyZhongUOM/non_fatal_stroke/5f567192/",
+      "codes": 8,
+      "status": "DRAFT_REQUIRES_CLINICAL_REVIEW",
+      "active_in_dataset": false,
+      "rationale": "Candidate arterial cerebral infarction: exclude I636 venous thrombosis; omit parent I63 because APCS prefix matching would re-include I636. Standalone I63/I63X records require a separate policy.",
+      "file_sha256": "9e0357c88a8152beee9c2440aea844f3114b9cccb6a0ba241d2664ce9b0a86bf"
+    },
+    {
+      "file": "ischaemic-or-unspecified-stroke-icd10.csv",
+      "source_file": "user-BillyZhongUOM-non_fatal_stroke.csv",
+      "source_version_url": "https://www.opencodelists.org/codelist/user/BillyZhongUOM/non_fatal_stroke/5f567192/",
+      "codes": 9,
+      "status": "DRAFT_REQUIRES_CLINICAL_REVIEW",
+      "active_in_dataset": false,
+      "rationale": "Sensitivity candidate adds unspecified stroke I64; not equivalent to confirmed ischaemic stroke.",
+      "file_sha256": "38773f7315855dcd917a5ef6825b75cdc3caa7c4cf931c45643e5bf9634651c4"
+    }
+  ]
+}

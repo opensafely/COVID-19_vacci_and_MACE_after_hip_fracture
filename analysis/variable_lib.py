@@ -7,6 +7,7 @@ import operator
 from functools import reduce
 
 from ehrql import case, when
+from study_config import HISTORY_START
 from ehrql.codes import ICD10Code
 from ehrql.tables.tpp import (
     clinical_events,
@@ -32,6 +33,7 @@ def has_prior_event_snomed(codelist, before_date):
         clinical_events
         .where(clinical_events.snomedct_code.is_in(codelist))
         .where(clinical_events.date < before_date)
+        .where(clinical_events.date >= HISTORY_START)
         .exists_for_patient()
     )
 
@@ -42,6 +44,7 @@ def last_prior_event_snomed(codelist, before_date):
         clinical_events
         .where(clinical_events.snomedct_code.is_in(codelist))
         .where(clinical_events.date < before_date)
+        .where(clinical_events.date >= HISTORY_START)
         .sort_by(clinical_events.date)
         .last_for_patient()
     )
@@ -98,6 +101,7 @@ def has_prior_admission_with_diagnosis(icd10_codes, before_date):
     return (
         apcs
         .where(apcs.admission_date < before_date)
+        .where(apcs.admission_date >= HISTORY_START)
         .where(apcs.all_diagnoses.contains_any_of(icd10_codes))
         .exists_for_patient()
     )
@@ -167,7 +171,8 @@ def get_ethnicity6(index_date, ethnicity_codelist):
     latest_ethnicity_code = (
         clinical_events
         .where(clinical_events.snomedct_code.is_in(ethnicity_codelist))
-        .where(clinical_events.date.is_on_or_before(index_date))
+        .where(clinical_events.date < index_date)
+        .where(clinical_events.date >= HISTORY_START)
         .sort_by(clinical_events.date)
         .last_for_patient()
         .snomedct_code.to_category(ethnicity_codelist)
