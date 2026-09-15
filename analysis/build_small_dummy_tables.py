@@ -19,7 +19,6 @@ def build(limit=1000):
     total = len(patients)
     count = min(limit, total)
     chosen = {patients[i * total // count]["patient_id"] for i in range(count)}
-    counts = []
     for path in sorted(source.glob("*.csv")):
         with path.open(newline="") as inp, (destination / path.name).open("w", newline="") as out:
             reader = csv.DictReader(inp)
@@ -32,18 +31,7 @@ def build(limit=1000):
                 if row["patient_id"] in chosen:
                     writer.writerow(row)
                     n += 1
-            counts.append(f"- {path.name}: {n} rows")
-    (destination / "README.md").write_text(
-        "# Small synthetic tables for routine tests\n\n"
-        f"Contains {count} of {total} synthetic patients, sampled at evenly spaced "
-        "positions in the original patients file. All events belonging to each "
-        "selected patient are retained. No real patient data are included.\n\n"
-        "Generated with `python analysis/build_small_dummy_tables.py`; "
-        "the full source tables remain one directory above. This subset keeps "
-        "routine local and CI extraction within modest memory limits. "
-        "The separate ehrQL assurance cases test clinical timing boundaries.\n\n"
-        + "\n".join(counts) + "\n"
-    )
+            print(f"{path.name}: {n} rows")
     print(f"Wrote {count} synthetic patients and all their records to {destination}")
 
 

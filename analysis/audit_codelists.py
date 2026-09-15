@@ -1,9 +1,9 @@
 """Write a reproducible inventory of downloaded codelists (standard library only).
 
-Run from the repository root: python analysis/audit_codelists.py
-This checks file structure and provenance, not clinical validity. Review candidate
-definitions separately; they are intentionally outside the downloaded manifest.
+Run from the repository root with --output pointing to a local workspace file.
+This checks file structure and provenance, not clinical validity.
 """
+import argparse
 import ast
 import csv
 import hashlib
@@ -12,7 +12,7 @@ from collections import defaultdict
 from pathlib import Path
 
 
-def main():
+def main(output):
     manifest = json.loads(Path("codelists/codelists.json").read_text())["files"]
     tree = ast.parse(Path("analysis/codelists.py").read_text())
     imports = defaultdict(list)
@@ -59,8 +59,8 @@ def main():
             "version_url": meta["url"], "downloaded_at": meta["downloaded_at"],
             "file_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
         })
-    Path("codelists/audit").mkdir(exist_ok=True)
-    with Path("codelists/audit/inventory.csv").open("w", newline="") as f:
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with output.open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
@@ -68,4 +68,6 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", type=Path, required=True)
+    main(parser.parse_args().output)
