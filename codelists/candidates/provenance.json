@@ -9,7 +9,7 @@
       "status": "DRAFT_REQUIRES_CLINICAL_REVIEW",
       "active_in_dataset": false,
       "rationale": "Remove S729 (unspecified femur); diagnosis position and procedure-only inclusion still require review.",
-      "file_sha256": "e34a48ecabe34494d3c79c952b4e9f104be08ccc0afad2c20e971be1f5d2590c"
+      "file_sha256": "ebb434342695e3d30e8fff01157e3291739c66017393e93ba9ce661416d5b4a5"
     },
     {
       "file": "ischaemic-stroke-arterial-icd10.csv",
@@ -19,7 +19,7 @@
       "status": "DRAFT_REQUIRES_CLINICAL_REVIEW",
       "active_in_dataset": false,
       "rationale": "Candidate arterial cerebral infarction: exclude I636 venous thrombosis; omit parent I63 because APCS prefix matching would re-include I636. Standalone I63/I63X records require a separate policy.",
-      "file_sha256": "9e0357c88a8152beee9c2440aea844f3114b9cccb6a0ba241d2664ce9b0a86bf"
+      "file_sha256": "303c7f60b91cc14cd9e4cb8a1aa238e65fe1977421e2fb2f577ed9e7119ded18"
     },
     {
       "file": "ischaemic-or-unspecified-stroke-icd10.csv",
@@ -29,7 +29,7 @@
       "status": "DRAFT_REQUIRES_CLINICAL_REVIEW",
       "active_in_dataset": false,
       "rationale": "Sensitivity candidate adds unspecified stroke I64; not equivalent to confirmed ischaemic stroke.",
-      "file_sha256": "38773f7315855dcd917a5ef6825b75cdc3caa7c4cf931c45643e5bf9634651c4"
+      "file_sha256": "89e04a57c063d4a3253009ccbaf53470e6af47c483e2d9c9061e6b8c95bfd443"
     }
   ]
 }

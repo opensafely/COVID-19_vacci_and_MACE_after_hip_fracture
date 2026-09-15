@@ -60,7 +60,7 @@ def main():
             "file_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
         })
     with Path("codelists/inventory.csv").open("w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
     print(f"Inventoried {len(rows)} manifest files; {sum(r['usage'] == 'referenced' for r in rows)} referenced by analysis.")
