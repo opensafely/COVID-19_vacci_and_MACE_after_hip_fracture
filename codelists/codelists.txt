@@ -58,3 +58,7 @@ opensafely/risedronate/4620439b
 opensafely/ibandronic-acid/14015d31
 opensafely/zoledronic-acid/2fc3905c
 opensafely/teriparatide/61e276c6
+
+user/elsie_horne/anticoagulant_dmd/7aa47477
+
+user/elsie_horne/antiplatelet_dmd/61950142

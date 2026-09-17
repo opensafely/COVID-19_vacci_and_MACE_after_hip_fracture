@@ -290,9 +290,9 @@ risedronate_codes = codelist_from_csv("codelists/opensafely-risedronate.csv", co
 ibandronate_codes = codelist_from_csv("codelists/opensafely-ibandronic-acid.csv", column="code")
 zoledronate_codes = codelist_from_csv("codelists/opensafely-zoledronic-acid.csv", column="code")
 teriparatide_codes = codelist_from_csv("codelists/opensafely-teriparatide.csv", column="code")
-denosumab_codes = codelist_from_csv("codelists/user-xixiong-denosumab-for-osteoporosis.csv", column="code")
-raloxifene_codes = codelist_from_csv("codelists/user-xixiong-raloxifene.csv", column="code")
-romosozumab_codes = codelist_from_csv("codelists/user-xixiong-romosozumab.csv", column="code")
+denosumab_codes = codelist_from_csv("codelists/uploaded/user-xixiong-denosumab-for-osteoporosis.csv", column="code")
+raloxifene_codes = codelist_from_csv("codelists/uploaded/user-xixiong-raloxifene.csv", column="code")
+romosozumab_codes = codelist_from_csv("codelists/uploaded/user-xixiong-romosozumab.csv", column="code")
 bone_med_codes = list(set(alendronate_codes + risedronate_codes + ibandronate_codes +
     zoledronate_codes + teriparatide_codes + denosumab_codes + raloxifene_codes + romosozumab_codes))
 

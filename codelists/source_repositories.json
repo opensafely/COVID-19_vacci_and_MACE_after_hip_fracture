@@ -1,0 +1,66 @@
+{
+  "opensafely-smoking-clear.csv": {
+    "source_repository_url": "https://github.com/opensafely/inequalities-risk-factors-bloodstream-infections-IDAIRE-BSI/blob/fac870eecd4331304dab2b77d0f83e9fbc3044ee/codelists/opensafely-smoking-clear.csv",
+    "source_file_sha256": "410609970d0ab8681fad8fa8d1ff858b5d65b24350c9c1ef435c1cc4db0853b6"
+  },
+  "primis-covid19-vacc-uptake-longres.csv": {
+    "source_repository_url": "https://github.com/opensafely/inequalities-risk-factors-bloodstream-infections-IDAIRE-BSI/blob/fac870eecd4331304dab2b77d0f83e9fbc3044ee/codelists/primis-covid19-vacc-uptake-longres.csv",
+    "source_file_sha256": "dc05ba0f7b575db51e3b1b6f2a3d35e744b09e111f896c904bbcdadfbf1c90a0"
+  },
+  "nhsd-primary-care-domain-refsets-bmival_cod.csv": {
+    "source_repository_url": "https://github.com/opensafely/zostavax-dementia/blob/41783e87a1bda1be02afabd36147175850a91e37/codelists/nhsd-primary-care-domain-refsets-bmival_cod.csv",
+    "source_file_sha256": "232a92608506d94ed31c4836a995dab387ade2a0470d1659a151f384a0217cac"
+  },
+  "nhs-drug-refsets-stat_cod.csv": {
+    "source_repository_url": "https://github.com/opensafely/zostavax-dementia/blob/41783e87a1bda1be02afabd36147175850a91e37/codelists/nhs-drug-refsets-stat_cod.csv",
+    "source_file_sha256": "50f7e2af92405a546775572ac92caefa7a24bef4507115d9ba8b916a09019133"
+  },
+  "nhs-drug-refsets-antihyp_cod.csv": {
+    "source_repository_url": "https://github.com/opensafely/zostavax-dementia/blob/41783e87a1bda1be02afabd36147175850a91e37/codelists/nhs-drug-refsets-antihyp_cod.csv",
+    "source_file_sha256": "cd7475c78310f32578d62fa8fe856111805c1fa648784982dd454d44e556d264"
+  },
+  "bristol-fractures.csv": {
+    "source_repository_url": "https://github.com/opensafely/covid_collateral_hf/blob/7596d2a94ac569d87be54510d86e63626f01a366/codelists/bristol-fractures.csv",
+    "source_file_sha256": "9a7891a98d40c7e5342a29f783bc45f50a109850880531fb143f35ad7b0fa69f"
+  },
+  "user-elsie_horne-anticoagulant_dmd.csv": {
+    "source_repository_url": "https://github.com/opensafely/post-covid-bristol/blob/47ddcf1ec481667533af55660bb83eab0a4d2b83/codelists/user-elsie_horne-anticoagulant_dmd.csv",
+    "source_file_sha256": "11de4c9a3b049f92f3592bbb88cad9c6137ea95544e324903887dcb945c9c0cf"
+  },
+  "user-elsie_horne-antiplatelet_dmd.csv": {
+    "source_repository_url": "https://github.com/opensafely/post-covid-bristol/blob/47ddcf1ec481667533af55660bb83eab0a4d2b83/codelists/user-elsie_horne-antiplatelet_dmd.csv",
+    "source_file_sha256": "d180c5c4d0e8207ee50cbafcbc0c9e0063cd1c8107504102c5c19c60ee7f0519"
+  },
+  "opensafely-alendronic-acid.csv": {
+    "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/opensafely-alendronic-acid.csv",
+    "source_file_sha256": "2f209501b8b8a6a6b0ddac1c3dc81d77c28b0b3027b918bf010acac04d3104b7"
+  },
+  "opensafely-risedronate.csv": {
+    "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/opensafely-risedronate.csv",
+    "source_file_sha256": "d8fc65538e5771c94a106ce2a83c46968d0ef082bfeeae87e971f32dcc07b7e5"
+  },
+  "opensafely-ibandronic-acid.csv": {
+    "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/opensafely-ibandronic-acid.csv",
+    "source_file_sha256": "5858b06f46383df1693b4d67e46abc0c92838016e5ed27f7004172a4fd30b883"
+  },
+  "opensafely-zoledronic-acid.csv": {
+    "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/opensafely-zoledronic-acid.csv",
+    "source_file_sha256": "3b718b65a7e71b826408bd2f0c8492064722f0d42c196f7c81708db7720b71eb"
+  },
+  "opensafely-teriparatide.csv": {
+    "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/opensafely-teriparatide.csv",
+    "source_file_sha256": "1868af502033ee2cc9675a4fc8bb97b0bbef98cc82a277466d2228ba983a48fc"
+  },
+  "uploaded/user-xixiong-denosumab-for-osteoporosis.csv": {
+    "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/uploaded/user-xixiong-denosumab-for-osteoporosis.csv",
+    "source_file_sha256": "6cb6ef3557723979c2beb4976a277475378117ecd9c5c715eca990b775f1d0e8"
+  },
+  "uploaded/user-xixiong-raloxifene.csv": {
+    "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/uploaded/user-xixiong-raloxifene.csv",
+    "source_file_sha256": "4c57af2472f8fae95505556cc8408719cace9ba6d702580d3de419e59d5acc45"
+  },
+  "uploaded/user-xixiong-romosozumab.csv": {
+    "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/uploaded/user-xixiong-romosozumab.csv",
+    "source_file_sha256": "98d1c91c5d6c0fc5dedce47ae790fdec248c5cdb132cd5d0e3e04c1c4f378bbd"
+  }
+}
