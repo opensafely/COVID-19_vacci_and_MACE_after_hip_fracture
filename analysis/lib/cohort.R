@@ -45,7 +45,7 @@ prepare_cohort <- function(path) {
                 "age", "sex", "bmi", "imd_quintile", "ethnicity6", "smoking_status",
                 "mi_date", "stroke_date", "cvddeath_date", "mace_date",
                 "all_cause_death_date", "covax_most_recent_before_index",
-                "fluvax_most_recent_before_index")
+                "fluvax_most_recent_before_index", "covax_post30_date", "fluvax_post30_date")
   missing <- setdiff(required, names(d))
   if (length(missing)) stop("Missing columns: ", paste(missing, collapse = ", "))
   if (anyDuplicated(names(d))) stop("Duplicate column names")
@@ -85,6 +85,13 @@ prepare_cohort <- function(path) {
   first_component[!is.finite(first_component)] <- NA_real_
   if (!identical(unname(as.numeric(d$mace_date)), unname(first_component))) {
     stop("MACE must equal the earliest component date")
+  }
+  for (vaccine in c("covax", "fluvax")) {
+    post <- d[[paste0(vaccine, "_post30_date")]]
+    if (any(!is.na(post) & (post <= d$index_date | post > d$index_date + 30 |
+                           post > d$followup_end_date))) {
+      stop("Post-fracture vaccination outside the observed 30-day window: ", vaccine)
+    }
   }
 
   d$death_date <- d$all_cause_death_date

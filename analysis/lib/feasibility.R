@@ -190,38 +190,3 @@ gp_code_summary <- function(d) {
     tab$denominator <- nrow(d); tab
   }))
 }
-
-source_activity_summary <- function(path, dates, cohort) {
-  x <- read.csv(path, stringsAsFactors = FALSE)
-  needed <- c("measure", "interval_start", "interval_end", "numerator", "denominator")
-  if (!all(needed %in% names(x))) stop("Incomplete source activity file")
-  if (anyDuplicated(x[c("measure", "interval_start", "interval_end")])) stop("Duplicate monthly measures")
-  starts <- seq(dates$history_start, dates$data_end, by = "month")
-  measure_names <- c(paste0(rep(c("apcs", "gp_clinical", "gp_medications", "covid_vaccination", "flu_vaccination",
-        "gp_mi_record", "gp_stroke_record", "hospital_mi", "hospital_stroke", "sgss_positive"), each = 2),
-        rep(c("_records", "_patients"), 10)), "ons_death_patients")
-  if (any(!x$measure %in% measure_names)) stop("Unexpected source activity measure")
-  grid <- expand.grid(measure = measure_names, interval_start = format(starts), stringsAsFactors = FALSE)
-  full <- merge(grid, x, by = c("measure", "interval_start"), all.x = TRUE, sort = TRUE)
-  full$extraction_row_present <- !is.na(full$denominator)
-  starts <- as.Date(full$interval_start)
-  expected_end <- pmin(as.Date(format(starts + 32, "%Y-%m-01")) - 1, dates$data_end)
-  expected_n <- vapply(starts, function(day) sum(cohort$followup_end_date >= day), integer(1))
-  present <- full$extraction_row_present
-  if (any(full$denominator[present] != expected_n[present])) stop("Source and analytic cohort denominators differ")
-  if (any(as.Date(full$interval_end[present]) != expected_end[present])) stop("Unexpected source interval boundaries")
-  if (any(!is.finite(full$numerator[present]) | full$numerator[present] < 0)) stop("Invalid source counts")
-  full$row_status <- ifelse(present, "supplied", ifelse(expected_n == 0, "no_observable_cohort", "missing_with_nonzero_denominator"))
-  # An omitted interval is zero only when independently reconciled to no cohort members.
-  no_cohort <- !present & expected_n == 0
-  full$numerator[no_cohort] <- 0
-  full$denominator[no_cohort] <- 0
-  full$interval_end <- format(expected_end)
-  full$interval_days <- as.numeric(expected_end - starts) + 1
-  full$expected_cohort_denominator <- expected_n
-  full$recording_scope <- "Selected cohort from history start to individual follow-up end; not source completeness"
-  full$measure_unit <- ifelse(endsWith(full$measure, "_records"), "records", "patients")
-  full$source <- sub("_(records|patients)$", "", full$measure)
-  full$ratio <- NULL
-  full
-}

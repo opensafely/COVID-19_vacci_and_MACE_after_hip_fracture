@@ -1,6 +1,0 @@
-source("analysis/lib/cohort.R")
-source("analysis/lib/disclosure.R")
-opts <- read_options(list(input = "output/feasibility", output = "output/review"))
-tables <- review_tables(opts$input)
-write_review(tables, opts$output)
-message("Disclosure-controlled aggregate review written; public release requires Airlock review.")

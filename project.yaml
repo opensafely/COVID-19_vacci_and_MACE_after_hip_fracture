@@ -13,42 +13,25 @@ actions:
       highly_sensitive:
         dataset: output/dataset.csv
 
-
-  audit_dataset:
-    run: python:v2 python analysis/audit_dataset.py
-      --input output/dataset.csv
-      --output-dir output/quality
-    needs: [generate_dataset]
-    outputs:
-      highly_sensitive:
-        counts: output/quality/feasibility_counts.csv
-        checks: output/quality/validation_errors.csv
-
   prepare_cohort:
     run: r:v2 analysis/prepare_cohort.R
-    needs: [generate_dataset, audit_dataset]
+    needs: [generate_dataset]
     outputs:
       highly_sensitive:
         log: output/logs/prepare_cohort.txt
         dataset: output/analytical_cohort.rds
 
-  describe_cohort:
-    run: r:v2 analysis/describe_cohort.R
+  descriptive_analysis:
+    run: r:v2 analysis/descriptive_analysis.R
     needs: [prepare_cohort]
     outputs:
-      highly_sensitive:
-        baseline: output/tables/table1_feasibility.csv
-        vaccination: output/tables/vaccination_by_year.csv
-        missingness: output/tables/missingness.csv
-        post_fracture: output/tables/post_fracture_vaccination.csv
-
-  plot_vaccination_timing:
-    run: r:v2 analysis/plot_vaccination_timing.R
-    needs: [prepare_cohort]
-    outputs:
-      highly_sensitive:
-        before: output/figures/vaccination_before_fracture.png
-        after: output/figures/vaccination_after_fracture.png
+      moderately_sensitive:
+        baseline: output/descriptive/table1.csv
+        vaccination: output/descriptive/vaccination_overlap.csv
+        post_fracture: output/descriptive/post_vaccination.csv
+        before: output/descriptive/vaccination_before_fracture.png
+        after: output/descriptive/vaccination_after_fracture.png
+        report: output/descriptive/report.html
 
   generate_screening:
     run: ehrql:v1 generate-dataset analysis/screening_dataset.py
@@ -58,26 +41,21 @@ actions:
       highly_sensitive:
         dataset: output/screening.csv
 
-  generate_source_activity:
-    run: ehrql:v1 generate-measures analysis/source_activity_measures.py
-      --dummy-tables dummy-tables/small
-      --output output/source_activity.csv
-    outputs:
-      highly_sensitive:
-        measures: output/source_activity.csv
-
-  feasibility_report:
-    run: r:v2 analysis/feasibility_report.R
-    needs: [prepare_cohort, generate_screening, generate_source_activity]
-    outputs:
-      highly_sensitive:
-        tables: output/feasibility/*.csv
-        figure: output/feasibility/source_activity.png
-
-  review_feasibility:
-    run: r:v2 analysis/review_feasibility.R
-    needs: [feasibility_report]
+  feasibility_analysis:
+    run: r:v2 analysis/feasibility_analysis.R
+    needs: [prepare_cohort, generate_screening]
     outputs:
       moderately_sensitive:
         report: output/review/report.html
-        tables: output/review/*.csv
+        readiness: output/review/readiness.csv
+        flow: output/review/cohort_flow.csv
+        monthly: output/review/index_monthly.csv
+        definitions: output/review/definition_diagnostics.csv
+        sources: output/review/outcome_sources.csv
+        timing: output/review/outcome_timing.csv
+        followup: output/review/followup.csv
+        vaccination: output/review/vaccination_overlap.csv
+        post_fracture: output/review/post_vaccination.csv
+        missingness: output/review/missingness_by_year.csv
+      highly_sensitive:
+        codes: output/feasibility/gp_record_codes.csv
