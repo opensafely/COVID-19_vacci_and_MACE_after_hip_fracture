@@ -39,4 +39,8 @@ for criterion in criteria.values():
 gp_death_date = case(when(patients.date_of_death <= DATA_END).then(patients.date_of_death))
 ons_death_date = case(when(ons_deaths.date <= DATA_END).then(ons_deaths.date))
 admin_end_date = minimum_of(first_hf.admission_date + days(365), DATA_END)
-followup_end = minimum_of(admin_end_date, current_reg.end_date, gp_death_date, ons_death_date)
+preferred_death_date = ons_death_date.when_null_then(gp_death_date)
+legacy_followup_end = minimum_of(admin_end_date, current_reg.end_date, gp_death_date, ons_death_date)
+# ONS supplies both the death date and the certificate; use GP when ONS is absent.
+# Registration censoring remains conservative pending the transition audit.
+followup_end = minimum_of(admin_end_date, current_reg.end_date, preferred_death_date)

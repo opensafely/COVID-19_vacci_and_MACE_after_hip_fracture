@@ -57,5 +57,10 @@ actions:
         vaccination: output/review/vaccination_overlap.csv
         post_fracture: output/review/post_vaccination.csv
         missingness: output/review/missingness_by_year.csv
+        variables: output/review/variable_review.csv
+        observation: output/review/observation_review.csv
+        exposure_events: output/review/exposure_events.csv
+        baseline_exposure: output/review/baseline_by_exposure.csv
+        sequence: output/review/post_vaccine_sequence.csv
       highly_sensitive:
         codes: output/feasibility/gp_record_codes.csv

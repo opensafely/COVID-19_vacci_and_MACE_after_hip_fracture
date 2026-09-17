@@ -43,7 +43,7 @@ def main(output):
             reader = csv.DictReader(f)
             fields = reader.fieldnames
             data = list(reader)
-        code_col = next((c for c in ["code", "id", "icd", "dmd_id", "snomed_id"] if c in fields), None)
+        code_col = next((c for c in ["code", "id", "icd", "dmd_id", "snomed_id", "CTV3Code"] if c in fields), None)
         if code_col is None:
             raise ValueError(f"No code column in {name}")
         codes = [r[code_col] for r in data]

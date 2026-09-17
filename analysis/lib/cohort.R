@@ -55,7 +55,7 @@ prepare_cohort <- function(path) {
                            intersect(c("gp_registration_start", "covax_most_recent_before_index",
                                        "fluvax_most_recent_before_index", "covid_positive_before_index"), names(d))))
   for (name in date_columns) d[[name]] <- parse_iso_date(d[[name]], name)
-  numeric_columns <- intersect(c("age", "bmi", "imd_quintile", "covax_prior365_n",
+  numeric_columns <- intersect(c("age", "bmi", "bmi_2y", "bmi_5y", "bmi_legacy_2y", "egfr_value", "imd_quintile", "covax_prior365_n",
                                  "fluvax_prior365_n", "covax_post30_n", "fluvax_post30_n"), names(d))
   numeric_columns <- union(numeric_columns, grep("_n$", names(d), value = TRUE))
   for (name in numeric_columns) d[[name]] <- parse_number(d[[name]], name)
@@ -63,6 +63,7 @@ prepare_cohort <- function(path) {
                              "^index_primary_hip$|^reg_2y_at_index$|_index_day$|",
                              "_during_spell$|^neg_con_1$|^death_dates_disagree$"), names(d), value = TRUE)
   flag_columns <- union(flag_columns, intersect(c("index_diagnoses_missing", "index_admission_method_missing", "index_fall_W11_W17"), names(d)))
+  flag_columns <- union(flag_columns, grep("^history_|^care_home_|^ckd_current_|^egfr_(recorded|low_)|^smoking_(ever_recorded|same_day_conflict)$|^bmi_latest_out_of_range$|^surgery_multiple_groups$|^registration_(contiguous_next|overlap_continues)$|^index_primary_hip_exact$", names(d), value = TRUE))
   flag_columns <- setdiff(flag_columns, numeric_columns)
   for (name in flag_columns) d[[name]] <- parse_flag(d[[name]], name)
 
@@ -115,7 +116,7 @@ prepare_cohort <- function(path) {
   d$ethnicity <- d$ethnicity6
   d$ethnicity[is.na(d$ethnicity) | d$ethnicity == "Missing"] <- "Missing"
   d$smoking <- factor(d$smoking_status, levels = c("N", "E", "S"),
-                      labels = c("Legacy N: review required", "Legacy E: review required", "Legacy S: review required"))
+                      labels = c("Never smoker recorded", "Former smoker recorded", "Current smoker recorded"))
   d$followup_days <- as.numeric(d$followup_end_date - d$index_date)
   d$positive_followup <- d$followup_days > 0
   d$observed_30_days <- d$followup_days >= 30

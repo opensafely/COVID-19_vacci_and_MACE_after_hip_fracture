@@ -75,6 +75,7 @@ dataset.configure_dummy_data(
 from cohort_definition import (
     first_hf, age_at_index, current_reg, eligible_population,
     gp_death_date, ons_death_date, admin_end_date, followup_end,
+    preferred_death_date, legacy_followup_end,
 )
 dataset.define_population(eligible_population)
 
@@ -107,13 +108,15 @@ dataset.death_dates_disagree = (
 )
 dataset.admin_end_date = admin_end_date
 dataset.followup_end_date = followup_end
+dataset.legacy_followup_end_date = legacy_followup_end
+dataset.preferred_death_source = case(when(ons_death_date.is_not_null()).then("ONS"),
+    when(gp_death_date.is_not_null()).then("GP fallback"), otherwise="No death record")
 dataset.reg_2y_at_index = current_reg.start_date <= first_hf.admission_date - years(2)
 
 # These flags preserve uncertainty about diagnoses within the index spell.
 # Admission date does not establish when a MI/stroke began within that spell.
 dataset.index_spell_mi = first_hf.all_diagnoses.contains_any_of(codelists.mi_icd10_codes_expanded)
 dataset.index_spell_stroke = first_hf.all_diagnoses.contains_any_of(codelists.stroke_icd10_codes_expanded)
-dataset.index_primary_hip = first_hf.primary_diagnosis.is_in(codelists.hip_fracture_icd10_codes)
 dataset.index_hip_strict = first_hf.all_diagnoses.contains_any_of(["S720", "S721", "S722"])
 dataset.index_hip_unspecified = first_hf.all_diagnoses.contains("S729")
 
@@ -285,7 +288,7 @@ dataset.mace365 = dataset.mace_date.is_not_null()
 
 # ----- All-cause death during observed follow-up (competing risk) -----
 # Retain source dates above so disagreement can be reviewed before modelling.
-first_death_date = minimum_of(dataset.ons_death_date, dataset.gp_death_date)
+first_death_date = preferred_death_date
 dataset.all_cause_death_date = case(
     when(first_death_date <= followup_end).then(first_death_date)
 )
@@ -357,9 +360,6 @@ dataset.prior_hypertension = has_prior_event_snomed(
 dataset.prior_diabetes = has_prior_event_snomed(
     codelists.diabetes_snomed_codes, first_hf.admission_date
 )
-dataset.prior_ckd = has_prior_event_snomed(
-    codelists.ckd_snomed_codes, first_hf.admission_date
-)
 dataset.prior_copd = has_prior_event_snomed(
     codelists.copd_snomed_codes, first_hf.admission_date
 )
@@ -376,9 +376,7 @@ dataset.prior_alcohol_problems = has_prior_event_snomed(
     codelists.alcohol_snomed_codes, first_hf.admission_date
 )
 
-# Prior fracture at any site (from hospital data)
-# Using hip fracture ICD-10 codes broadly - a wider fracture codelist
-# would be preferable if available
+# Preserve the original hip-only history for comparison with the broader field.
 dataset.prior_frac = has_prior_admission_with_diagnosis(
     codelists.hip_fracture_icd10_codes_expanded,
     before_date=first_hf.admission_date,
@@ -400,15 +398,13 @@ bmi_record = (
     .sort_by(clinical_events.date)
     .last_for_patient()
 )
-dataset.bmi = bmi_record.numeric_value
-dataset.bmi_date = bmi_record.date
+dataset.bmi_legacy_2y = bmi_record.numeric_value
+dataset.bmi_legacy_2y_date = bmi_record.date
 
 
 # ----- Smoking -----
-# Most recent smoking code before index from the smoking-clear codelist
-# Since the codelist has no category column, we extract the code and
-# categorise in downstream R analysis. Alternatively, we define
-# separate code lists inline for S/E/N.
+# Original SNOMED mapping retained only for the definition comparison.
+# The primary review field uses explicit CTV3 categories in review_variables.py.
 
 # Never smoker codes
 smoking_never = [
@@ -470,25 +466,11 @@ latest_smoking_code = (
     .snomedct_code
 )
 
-dataset.smoking_status = case(
+dataset.smoking_legacy_status = case(
     when(latest_smoking_code.is_in(smoking_never)).then("N"),
     when(latest_smoking_code.is_in(smoking_ex)).then("E"),
     when(latest_smoking_code.is_not_null()).then("S"),  # All remaining codes = current smoker
 )
-
-
-# ----- Medications (in year before index) -----
-# NOTE: Medication dm+d codelists are placeholders in codelists.py
-# Uncomment when codelists are available:
-#
-# dataset.bone_med = has_prior_medication(
-#     codelists.bone_med_codes, first_hf.admission_date, within_days=365
-# )
-# dataset.cvd_med = (
-#     has_prior_medication(codelists.statin_codes, first_hf.admission_date, within_days=365)
-#     | has_prior_medication(codelists.antiplatelet_codes, first_hf.admission_date, within_days=365)
-#     | has_prior_medication(codelists.anticoagulant_codes, first_hf.admission_date, within_days=365)
-# )
 
 
 # ----- COVID-19 infection (confounder/mediator) -----
@@ -554,3 +536,6 @@ dataset.prior_year_clinical_records_n = prior_year_clinical.count_for_patient()
 dataset.prior_year_medication_records_n = prior_year_medications.count_for_patient()
 
 dataset.index_same_day_spells_n = apcs.where(apcs.admission_date == first_hf.admission_date).count_for_patient()
+
+from review_variables import add_review_variables
+add_review_variables(dataset, first_hf.admission_date, first_hf, current_reg)

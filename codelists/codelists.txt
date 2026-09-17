@@ -47,3 +47,14 @@ primis-covid19-vacc-uptake/learndis/54df0bd1
 primis-covid19-vacc-uptake/bmi/47614c03
 primis-covid19-vacc-uptake/bmi_stage/5dbdff42
 primis-covid19-vacc-uptake/sev_obesity/07c4a5cb
+opensafely/smoking-clear/2020-04-29
+primis-covid19-vacc-uptake/longres/v2.5
+nhsd-primary-care-domain-refsets/bmival_cod/20260630
+nhs-drug-refsets/stat_cod/20260630
+nhs-drug-refsets/antihyp_cod/20250912
+bristol/fractures/565037f8
+opensafely/alendronic-acid/114e9d3b
+opensafely/risedronate/4620439b
+opensafely/ibandronic-acid/14015d31
+opensafely/zoledronic-acid/2fc3905c
+opensafely/teriparatide/61e276c6

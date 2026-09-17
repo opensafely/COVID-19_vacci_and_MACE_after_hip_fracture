@@ -3,7 +3,11 @@ baseline_summary <- function(d) {
                      labels = c("<18.5", "18.5-<25", "25-<30", "30+"))
   fields <- c("age_group", "sex", "ethnicity", "imd", "bmi_group", "smoking", "prior_cvd",
               "prior_mi", "prior_stroke", "prior_heart_failure", "prior_af", "prior_hypertension",
-              "prior_diabetes", "prior_ckd", "prior_copd", "prior_cancer", "prior_dementia", "reg_2y_at_index")
+              "prior_diabetes", "prior_ckd_stage3_5", "prior_copd", "prior_cancer", "prior_dementia", "reg_2y_at_index",
+              "history_mi_combined", "history_stroke_combined", "history_heart_failure_combined",
+              "history_af_combined", "history_hypertension_combined", "prior_any_fracture_hospital",
+              "rx_statin_prior365", "rx_antihypertensive_prior365", "rx_antiplatelet_prior365",
+              "rx_anticoagulant_prior365", "rx_bone_active_prior365", "care_home_evidence", "surgery_group_review")
   do.call(rbind, lapply(fields, function(name) {
     values <- d[[name]]
     if (is.null(values)) stop("Missing baseline variable: ", name)

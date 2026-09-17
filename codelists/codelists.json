@@ -257,6 +257,131 @@
       "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/sev_obesity/07c4a5cb/",
       "downloaded_at": "2026-02-25 21:08:36.603626Z",
       "sha": "dfe3662bed703c590d1449e604e892cdd7a360c1"
+    },
+    "opensafely-smoking-clear.csv": {
+      "id": "opensafely/smoking-clear/2020-04-29",
+      "url": "https://www.opencodelists.org/codelist/opensafely/smoking-clear/2020-04-29/",
+      "downloaded_at": "2026-04-09 15:21:14.223630Z",
+      "sha": "0b5f3afe1db96dcce5141220e893a42ba2e5a8f7",
+      "source_repository_url": "https://github.com/opensafely/inequalities-risk-factors-bloodstream-infections-IDAIRE-BSI/blob/fac870eecd4331304dab2b77d0f83e9fbc3044ee/codelists/opensafely-smoking-clear.csv",
+      "file_sha256": "410609970d0ab8681fad8fa8d1ff858b5d65b24350c9c1ef435c1cc4db0853b6"
+    },
+    "primis-covid19-vacc-uptake-longres.csv": {
+      "id": "primis-covid19-vacc-uptake/longres/v2.5",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/longres/v2.5/",
+      "downloaded_at": "2026-04-09 15:21:16.223177Z",
+      "sha": "8b5a59338b209bc8dab506364879dead40f1de0c",
+      "source_repository_url": "https://github.com/opensafely/inequalities-risk-factors-bloodstream-infections-IDAIRE-BSI/blob/fac870eecd4331304dab2b77d0f83e9fbc3044ee/codelists/primis-covid19-vacc-uptake-longres.csv",
+      "file_sha256": "dc05ba0f7b575db51e3b1b6f2a3d35e744b09e111f896c904bbcdadfbf1c90a0"
+    },
+    "nhsd-primary-care-domain-refsets-bmival_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/bmival_cod/20260630",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/bmival_cod/20260630/",
+      "downloaded_at": "2026-09-03 15:22:03.412654+00:00Z",
+      "sha": "2fc9695c0029388d5d4741e821688e0c4a1b19ee",
+      "source_repository_url": "https://github.com/opensafely/zostavax-dementia/blob/41783e87a1bda1be02afabd36147175850a91e37/codelists/nhsd-primary-care-domain-refsets-bmival_cod.csv",
+      "file_sha256": "232a92608506d94ed31c4836a995dab387ade2a0470d1659a151f384a0217cac"
+    },
+    "nhs-drug-refsets-stat_cod.csv": {
+      "id": "nhs-drug-refsets/stat_cod/20260630",
+      "url": "https://www.opencodelists.org/codelist/nhs-drug-refsets/stat_cod/20260630/",
+      "downloaded_at": "2026-09-03 14:48:53.609374+00:00Z",
+      "sha": "f3f2e14257c2dd640247aef8da4b5be6e38093c1",
+      "source_repository_url": "https://github.com/opensafely/zostavax-dementia/blob/41783e87a1bda1be02afabd36147175850a91e37/codelists/nhs-drug-refsets-stat_cod.csv",
+      "file_sha256": "50f7e2af92405a546775572ac92caefa7a24bef4507115d9ba8b916a09019133"
+    },
+    "nhs-drug-refsets-antihyp_cod.csv": {
+      "id": "nhs-drug-refsets/antihyp_cod/20250912",
+      "url": "https://www.opencodelists.org/codelist/nhs-drug-refsets/antihyp_cod/20250912/",
+      "downloaded_at": "2026-05-29 10:17:46.237734Z",
+      "sha": "1bf4d25c0245b4badcb971625adc123f631a163c",
+      "source_repository_url": "https://github.com/opensafely/zostavax-dementia/blob/41783e87a1bda1be02afabd36147175850a91e37/codelists/nhs-drug-refsets-antihyp_cod.csv",
+      "file_sha256": "cd7475c78310f32578d62fa8fe856111805c1fa648784982dd454d44e556d264"
+    },
+    "bristol-fractures.csv": {
+      "id": "bristol/fractures/565037f8",
+      "url": "https://www.opencodelists.org/codelist/bristol/fractures/565037f8/",
+      "downloaded_at": "2024-05-28 07:37:24.430587Z",
+      "sha": "475fc8725db53055020e675de4f18e6fa7f75b6d",
+      "source_repository_url": "https://github.com/opensafely/covid_collateral_hf/blob/7596d2a94ac569d87be54510d86e63626f01a366/codelists/bristol-fractures.csv",
+      "file_sha256": "9a7891a98d40c7e5342a29f783bc45f50a109850880531fb143f35ad7b0fa69f"
+    },
+    "user-elsie_horne-anticoagulant_dmd.csv": {
+      "id": "user/elsie_horne/anticoagulant_dmd/7aa47477",
+      "url": "https://codelists.opensafely.org/codelist/user/elsie_horne/anticoagulant_dmd/7aa47477/",
+      "downloaded_at": "2021-09-02 10:04:22.527102Z",
+      "sha": "b0ab6e34262fcd2fee99d25068b25e140603e9e8",
+      "source_repository_url": "https://github.com/opensafely/post-covid-bristol/blob/47ddcf1ec481667533af55660bb83eab0a4d2b83/codelists/user-elsie_horne-anticoagulant_dmd.csv",
+      "file_sha256": "11de4c9a3b049f92f3592bbb88cad9c6137ea95544e324903887dcb945c9c0cf"
+    },
+    "user-elsie_horne-antiplatelet_dmd.csv": {
+      "id": "user/elsie_horne/antiplatelet_dmd/61950142",
+      "url": "https://codelists.opensafely.org/codelist/user/elsie_horne/antiplatelet_dmd/61950142/",
+      "downloaded_at": "2021-09-02 10:04:21.950167Z",
+      "sha": "75fcb2cdcc0c05e0d6b3fbfbee4cd101058b67f0",
+      "source_repository_url": "https://github.com/opensafely/post-covid-bristol/blob/47ddcf1ec481667533af55660bb83eab0a4d2b83/codelists/user-elsie_horne-antiplatelet_dmd.csv",
+      "file_sha256": "d180c5c4d0e8207ee50cbafcbc0c9e0063cd1c8107504102c5c19c60ee7f0519"
+    },
+    "opensafely-alendronic-acid.csv": {
+      "id": "opensafely/alendronic-acid/114e9d3b",
+      "url": "https://www.opencodelists.org/codelist/opensafely/alendronic-acid/114e9d3b/",
+      "downloaded_at": "2026-08-25 17:04:33.932704+00:00Z",
+      "sha": "aff6c76112bc2679f5cd3f6451bc5b20099ef556",
+      "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/opensafely-alendronic-acid.csv",
+      "file_sha256": "2f209501b8b8a6a6b0ddac1c3dc81d77c28b0b3027b918bf010acac04d3104b7"
+    },
+    "opensafely-risedronate.csv": {
+      "id": "opensafely/risedronate/4620439b",
+      "url": "https://www.opencodelists.org/codelist/opensafely/risedronate/4620439b/",
+      "downloaded_at": "2026-08-25 17:04:34.029081+00:00Z",
+      "sha": "690d33f9b5eefb713e312d3987d2f67de9d336fe",
+      "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/opensafely-risedronate.csv",
+      "file_sha256": "d8fc65538e5771c94a106ce2a83c46968d0ef082bfeeae87e971f32dcc07b7e5"
+    },
+    "opensafely-ibandronic-acid.csv": {
+      "id": "opensafely/ibandronic-acid/14015d31",
+      "url": "https://www.opencodelists.org/codelist/opensafely/ibandronic-acid/14015d31/",
+      "downloaded_at": "2026-08-25 17:04:34.145346+00:00Z",
+      "sha": "75e9afb339385085366e6585703e950f0583c79e",
+      "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/opensafely-ibandronic-acid.csv",
+      "file_sha256": "5858b06f46383df1693b4d67e46abc0c92838016e5ed27f7004172a4fd30b883"
+    },
+    "opensafely-zoledronic-acid.csv": {
+      "id": "opensafely/zoledronic-acid/2fc3905c",
+      "url": "https://www.opencodelists.org/codelist/opensafely/zoledronic-acid/2fc3905c/",
+      "downloaded_at": "2026-08-25 17:04:34.265073+00:00Z",
+      "sha": "e1f2b6b8e84172c4297699c05ae428192abc6d85",
+      "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/opensafely-zoledronic-acid.csv",
+      "file_sha256": "3b718b65a7e71b826408bd2f0c8492064722f0d42c196f7c81708db7720b71eb"
+    },
+    "opensafely-teriparatide.csv": {
+      "id": "opensafely/teriparatide/61e276c6",
+      "url": "https://www.opencodelists.org/codelist/opensafely/teriparatide/61e276c6/",
+      "downloaded_at": "2026-08-25 16:56:02.131238+00:00Z",
+      "sha": "0bc3d780a5078661872ffcfca9faa1efd5099c79",
+      "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/opensafely-teriparatide.csv",
+      "file_sha256": "1868af502033ee2cc9675a4fc8bb97b0bbef98cc82a277466d2228ba983a48fc"
+    },
+    "user-xixiong-denosumab-for-osteoporosis.csv": {
+      "id": "opensafely/NICE001-simulation-cohort@85a3bfa7cae77cc3816cb3ca4d775cc565656745:codelists/uploaded/user-xixiong-denosumab-for-osteoporosis.csv",
+      "url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/uploaded/user-xixiong-denosumab-for-osteoporosis.csv",
+      "downloaded_at": "2026-09-17T19:37:13.548369+00:00",
+      "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/uploaded/user-xixiong-denosumab-for-osteoporosis.csv",
+      "file_sha256": "6cb6ef3557723979c2beb4976a277475378117ecd9c5c715eca990b775f1d0e8"
+    },
+    "user-xixiong-raloxifene.csv": {
+      "id": "opensafely/NICE001-simulation-cohort@85a3bfa7cae77cc3816cb3ca4d775cc565656745:codelists/uploaded/user-xixiong-raloxifene.csv",
+      "url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/uploaded/user-xixiong-raloxifene.csv",
+      "downloaded_at": "2026-09-17T19:37:13.548675+00:00",
+      "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/uploaded/user-xixiong-raloxifene.csv",
+      "file_sha256": "4c57af2472f8fae95505556cc8408719cace9ba6d702580d3de419e59d5acc45"
+    },
+    "user-xixiong-romosozumab.csv": {
+      "id": "opensafely/NICE001-simulation-cohort@85a3bfa7cae77cc3816cb3ca4d775cc565656745:codelists/uploaded/user-xixiong-romosozumab.csv",
+      "url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/uploaded/user-xixiong-romosozumab.csv",
+      "downloaded_at": "2026-09-17T19:37:13.548864+00:00",
+      "source_repository_url": "https://github.com/opensafely/NICE001-simulation-cohort/blob/85a3bfa7cae77cc3816cb3ca4d775cc565656745/codelists/uploaded/user-xixiong-romosozumab.csv",
+      "file_sha256": "98d1c91c5d6c0fc5dedce47ae790fdec248c5cdb132cd5d0e3e04c1c4f378bbd"
     }
   }
 }

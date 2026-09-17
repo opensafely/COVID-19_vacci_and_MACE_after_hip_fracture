@@ -69,7 +69,8 @@ add_feasibility_variables <- function(d) {
 }
 
 flag_summary <- function(d) {
-  flags <- c("index_hip_strict", "index_hip_unspecified", "index_primary_hip", "index_procedure_only",
+  flags <- c("index_hip_strict", "index_hip_unspecified", "index_primary_hip", "index_primary_hip_exact", "index_procedure_only",
+             "diagnosed_lower_trauma_candidate", "registration_contiguous_next", "surgery_multiple_groups",
              "index_diagnoses_missing", "index_admission_method_missing", "index_fall_W11_W17",
              "index_spell_mi", "index_spell_stroke", "mi_hospital_overlaps_index_spell",
              "stroke_hospital_overlaps_index_spell", "mi_hospital_within_one_day_discharge",
@@ -104,7 +105,8 @@ outcome_timing <- function(d) {
   fields <- c("mi_date", "mi_hospital_date", "mi_gp_date", "stroke_date", "stroke_hospital_date", "stroke_gp_date",
               "stroke_arterial_ischaemic_hospital_date", "stroke_haemorrhagic_hospital_date",
               "stroke_unspecified_hospital_date", "stroke_venous_infarction_hospital_date",
-              "mi_after_discharge_date", "stroke_after_discharge_date", "cvddeath_date", "mace_date", "all_cause_death_date")
+              "mi_after_discharge_date", "stroke_after_discharge_date", "cvddeath_date", "mace_date",
+              "mace_hospital_date", "mace_hospital_ischaemic_date", "all_cause_death_date")
   do.call(rbind, lapply(fields, function(name) {
     delta <- as.numeric(d[[name]] - d$index_date)
     band <- cut(delta, c(-1, 0, 7, 30, 90, 365), labels = c("Day 0", "Days 1-7", "Days 8-30", "Days 31-90", "Days 91-365"))
@@ -164,7 +166,8 @@ post_vaccination_feasibility <- function(d) {
 }
 
 missingness_by_year <- function(d) {
-  fields <- c("bmi", "smoking_status", "ethnicity6", "imd_quintile", "region", "surgery_type",
+  fields <- c("bmi", "bmi_legacy_2y", "bmi_2y", "bmi_5y", "smoking_status", "smoking_legacy_status",
+              "egfr_value", "care_home_address", "care_home_evidence", "ethnicity6", "imd_quintile", "region", "surgery_type",
               "hf_discharge_date", "hf_admission_method", "practice_go_live_date", "gp_registration_start")
   do.call(rbind, lapply(c("All", as.character(sort(unique(d$index_year)))), function(year) {
     x <- if (year == "All") d else d[d$index_year == as.integer(year), ]

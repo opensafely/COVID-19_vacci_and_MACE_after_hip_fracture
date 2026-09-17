@@ -175,11 +175,16 @@ diabetes_snomed_codes = codelist_from_csv(
     column="code",
 )
 
-# CKD (Bristol multimorbidity)
-ckd_snomed_codes = codelist_from_csv(
+# These are eGFR measurement concepts, NOT CKD diagnoses.
+egfr_codes = codelist_from_csv(
     "codelists/bristol-multimorbidity_chronic-kidney-disease.csv",
     column="code",
 )
+
+# Stage 3-5 history follows IDAIRE BSI; PRIMIS staging is also compared.
+ckd35_codes = codelist_from_csv("codelists/primis-covid19-vacc-uptake-ckd35.csv", column="code")
+ckd15_codes = codelist_from_csv("codelists/primis-covid19-vacc-uptake-ckd15.csv", column="code")
+ckd_cov_codes = codelist_from_csv("codelists/primis-covid19-vacc-uptake-ckd_cov.csv", column="code")
 
 # COPD (Bristol multimorbidity)
 copd_snomed_codes = codelist_from_csv(
@@ -269,36 +274,25 @@ smoking_clear_codes = codelist_from_csv(
     column="id",
 )
 
+# Explicit categories used by IDAIRE BSI and post-covid-cvd-methods-redux.
+smoking_categorised = codelist_from_csv("codelists/opensafely-smoking-clear.csv",
+    column="CTV3Code", category_column="Category")
+bmi_value_codes = codelist_from_csv("codelists/nhsd-primary-care-domain-refsets-bmival_cod.csv", column="code")
+care_home_codes = codelist_from_csv("codelists/primis-covid19-vacc-uptake-longres.csv", column="code")
+fracture_history_icd10 = codelist_from_csv("codelists/bristol-fractures.csv", column="code")
 
-# =====================================================================
-# CONFOUNDERS: MEDICATIONS (dm+d)
-# =====================================================================
-# NOTE: You will need dm+d codelists for these medication groups.
-# These can be found on OpenCodelists or created.
-# Placeholders below - add actual codelist CSV references when available.
-
-# Anti-osteoporosis medications (bisphosphonates, denosumab, teriparatide, etc.)
-# TODO: Create or find dm+d codelist
-# bone_med_codes = codelist_from_csv(
-#     "codelists/opensafely-bone-medications-dmd.csv",
-#     column="code",
-# )
-
-# Statins
-# statin_codes = codelist_from_csv(
-#     "codelists/opensafely-statins-dmd.csv",
-#     column="code",
-# )
-
-# Antiplatelets
-# antiplatelet_codes = codelist_from_csv(
-#     "codelists/opensafely-antiplatelets-dmd.csv",
-#     column="code",
-# )
-
-# Anticoagulants
-# anticoagulant_codes = codelist_from_csv(
-#     "codelists/opensafely-anticoagulants-dmd.csv",
-#     column="code",
-# )
+statin_codes = codelist_from_csv("codelists/nhs-drug-refsets-stat_cod.csv", column="code")
+antihypertensive_codes = codelist_from_csv("codelists/nhs-drug-refsets-antihyp_cod.csv", column="code")
+antiplatelet_codes = codelist_from_csv("codelists/user-elsie_horne-antiplatelet_dmd.csv", column="dmd_id")
+anticoagulant_codes = codelist_from_csv("codelists/user-elsie_horne-anticoagulant_dmd.csv", column="dmd_id")
+alendronate_codes = codelist_from_csv("codelists/opensafely-alendronic-acid.csv", column="code")
+risedronate_codes = codelist_from_csv("codelists/opensafely-risedronate.csv", column="code")
+ibandronate_codes = codelist_from_csv("codelists/opensafely-ibandronic-acid.csv", column="code")
+zoledronate_codes = codelist_from_csv("codelists/opensafely-zoledronic-acid.csv", column="code")
+teriparatide_codes = codelist_from_csv("codelists/opensafely-teriparatide.csv", column="code")
+denosumab_codes = codelist_from_csv("codelists/user-xixiong-denosumab-for-osteoporosis.csv", column="code")
+raloxifene_codes = codelist_from_csv("codelists/user-xixiong-raloxifene.csv", column="code")
+romosozumab_codes = codelist_from_csv("codelists/user-xixiong-romosozumab.csv", column="code")
+bone_med_codes = list(set(alendronate_codes + risedronate_codes + ibandronate_codes +
+    zoledronate_codes + teriparatide_codes + denosumab_codes + raloxifene_codes + romosozumab_codes))
 

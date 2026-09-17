@@ -60,10 +60,10 @@ review_tables <- function(tables) {
   out <- list()
   readiness <- read("readiness")
   allowed_checks <- c("cohort_not_empty", "screening_reconciled", "monthly_source_activity",
-    "clinical_definitions", "medication_classes", "frailty_care_home", "broader_prior_fracture",
-    "high_energy_trauma", "source_complete_dates", "effectiveness_models")
+    "clinical_definitions", "medication_classes", "care_home", "frailty", "broader_prior_fracture",
+    "high_energy_trauma", "registration_continuity", "source_complete_dates", "effectiveness_models")
   allowed_status <- c("PASS", "REVIEW_EMPTY_COHORT", "REVIEW_REQUIRED",
-                      "NOT_IMPLEMENTED", "NOT_RUN")
+                      "NOT_IMPLEMENTED", "NOT_RUN", "IMPLEMENTED_FOR_REVIEW")
   if (anyNA(readiness[c("check", "status")]) || any(!readiness$check %in% allowed_checks) ||
       any(!readiness$status %in% allowed_status)) stop("Unexpected readiness value")
   out$readiness <- readiness[c("check", "status")]
@@ -99,6 +99,16 @@ review_tables <- function(tables) {
   missing <- missing[missing$index_year != "All", ]
   out$missingness_by_year <- protect_counts(missing, c("index_year", "variable"),
     c("n_missing", "denominator"), denominator = "denominator")
+  for (name in c("variable_review", "observation_review")) {
+    out[[name]] <- protect_counts(read(name), c("domain", "definition", "category"),
+      c("n", "denominator"), partition = c("domain", "definition"), denominator = "denominator")
+  }
+  out$exposure_events <- protect_counts(read("exposure_events"), c("vaccine", "index_year", "group"),
+    c("denominator", "n_mace_provisional", "n_mace_hospital", "n_mace_hospital_ischaemic", "n_death"), denominator = "denominator")
+  out$baseline_by_exposure <- protect_counts(read("baseline_by_exposure"), c("domain", "vaccine", "group", "definition", "category"),
+    c("n", "denominator"), partition = c("vaccine", "group", "definition"), denominator = "denominator")
+  out$post_vaccine_sequence <- protect_counts(read("post_vaccine_sequence"), c("vaccine", "domain", "definition", "category"),
+    c("n", "denominator"), partition = c("vaccine", "domain", "definition"), denominator = "denominator")
   out
 }
 
@@ -156,6 +166,10 @@ write_review <- function(tables, directory, title = "Hip fracture vaccination: f
     '<p>Positive counts of 7 or fewer and selected related cells are [REDACTED]. Remaining counts are rounded to the nearest 5; rounded cells may not sum to rounded denominators. [NOT_AVAILABLE] means unavailable, not zero. Raw percentages are omitted.</p>',
     '<p>Clinical definitions remain provisional. Entry ends on 1 January 2025, so the final entry month and quarter are partial. Follow-up is capped at 1 January 2026. Monthly source activity was not run; source completeness remains unverified. No prior vaccine record does not establish non-vaccination.</p>',
     '<p>Outcome dates and definitions remain provisional, including GP history codes, same-admission events and the current MI/stroke death definition. The post-vaccination table uses the 30-day window and distinguishes early observation endings. Detailed GP codes, age/sex vaccine cross-tabulations and individual data remain internal. No effectiveness model has been fitted.</p>',
+    '<p>Round 2: CKD denotes recorded stage 3-5 diagnosis, separately from eGFR measurement. Repeated low eGFR is corroboration, not a confirmed CKD diagnosis. BMI compares the original 2-year definition with adult measurements of 10-100 in 2- and 5-year windows, all limited to history since 2017. The descriptive BMI uses the 5-year candidate. Smoking uses explicit CTV3 categories and prior smoking to correct a later never-smoker record; absence remains missing.</p>',
+    '<p>Prescriptions cover GP records in the preceding 365 days and do not establish dispensing, adherence or hospital treatment. Care-home address evidence is a potential match; frailty has not been implemented. Broader fracture history includes all hospital fracture types. All baseline clinical histories start in 2017, so no record does not rule out earlier disease.</p>',
+    '<p>ONS death dates take priority with GP fallback. The observation review compares the former earliest-source endpoint and examines the next registration; continuous registration has not been reconstructed. Observation time is not event-free survival time. The arterial-ischaemic hospital MACE candidate combines hospital MI and arterial ischaemic stroke with the existing MI/stroke certificate death component; it is not a validated final outcome. Index-spell events remain separate because their onset is unknown.</p>',
+    '<p>Exposure events cover complete entry years 2021-2024; baseline comparisons pool 2022-2024 for feasibility only. Neither chooses the final comparison window. Counts of observed events are not cumulative risks or vaccine effects. Sequence and day-30 landmark tables diagnose timing and sample availability; they do not remove immortal-time bias or confounding.</p>',
     figure_html, sections, '</body></html>')
   writeLines(html, file.path(directory, "report.html"))
 }
