@@ -65,7 +65,7 @@ observation_review <- function(d) {
   status[is.na(d$ons_death_date) & !is.na(d$gp_death_date)] <- "GP only"
   status[!is.na(d$ons_death_date) & is.na(d$gp_death_date)] <- "ONS only"
   add(status, c(levels(band), "Neither source", "GP only", "ONS only"), "Death sources through data end, not restricted to year 1")
-  extension <- as.numeric(d$followup_end_date - d$legacy_followup_end_date)
+  extension <- as.numeric(d$single_registration_followup_end_date - d$legacy_followup_end_date)
   band <- cut(extension, c(-1, 0, 7, 30, Inf), labels = c("Unchanged", "1-7 days longer", "8-30 days longer", "31+ days longer"))
   add(band, levels(band), "ONS preference effect on observed follow-up")
   for (name in c("mace_date", "cvddeath_date", "all_cause_death_date")) {
@@ -74,8 +74,9 @@ observation_review <- function(d) {
     add(value, c("No observed event", "Event after legacy endpoint", "Event on or before legacy endpoint"), name)
   }
   # Only diagnose transitions after the selected index registration ends.
-  censored <- !is.na(d$dereg_date) & d$dereg_date == d$followup_end_date &
-    d$dereg_date < d$admin_end_date & (is.na(d$all_cause_death_date) | d$all_cause_death_date > d$dereg_date)
+  old_end <- d$registration_current_end_date
+  censored <- !is.na(old_end) & old_end == d$single_registration_followup_end_date &
+    old_end < d$admin_end_date & (is.na(d$all_cause_death_date) | d$all_cause_death_date > old_end)
   transition <- rep("Not censored at registration end", nrow(d))
   transition[censored] <- "Censored; no next registration within 30 days"
   transition[censored & !is.na(d$registration_next_start_date)] <- "Censored; next registration in 2-30 days"
@@ -83,7 +84,7 @@ observation_review <- function(d) {
   transition[censored & flag_true(d$registration_overlap_continues)] <- "Censored; overlapping registration continues"
   add(transition, c("Not censored at registration end", "Censored; no next registration within 30 days",
     "Censored; next registration in 2-30 days", "Censored; next registration within 1 day",
-    "Censored; overlapping registration continues"), "Registration transition audit; censoring unchanged")
+    "Censored; overlapping registration continues"), "Former single-registration endpoint: transition audit")
   do.call(rbind, rows)
 }
 

@@ -296,3 +296,10 @@ romosozumab_codes = codelist_from_csv("codelists/uploaded/user-xixiong-romosozum
 bone_med_codes = list(set(alendronate_codes + risedronate_codes + ibandronate_codes +
     zoledronate_codes + teriparatide_codes + denosumab_codes + raloxifene_codes + romosozumab_codes))
 
+
+# Explicit project subsets of the NHS primary-care refsets: event diagnoses only.
+# History, sequelae and isolated complications are excluded; see versioned CSV terms.
+acute_mi_snomed = codelist_from_csv("codelists/project-acute-mi-snomed.csv", column="code")
+ischaemic_stroke_snomed = codelist_from_csv("codelists/project-ischaemic-stroke-snomed.csv", column="code")
+acute_mi_icd10 = ["I21", "I22"]
+ischaemic_stroke_icd10 = ["I630", "I631", "I632", "I633", "I634", "I635", "I638", "I639"]

@@ -107,6 +107,8 @@ dataset.death_dates_disagree = (
     & (gp_death_date != ons_death_date)
 )
 dataset.admin_end_date = admin_end_date
+dataset.single_registration_followup_end_date = followup_end
+followup_end = minimum_of(admin_end_date, preferred_death_date)
 dataset.followup_end_date = followup_end
 dataset.legacy_followup_end_date = legacy_followup_end
 dataset.preferred_death_source = case(when(ons_death_date.is_not_null()).then("ONS"),
@@ -520,3 +522,6 @@ dataset.index_same_day_spells_n = apcs.where(apcs.admission_date == first_hf.adm
 
 from review_variables import add_review_variables
 add_review_variables(dataset, first_hf.admission_date, first_hf, current_reg)
+
+from formal_variables import add_formal_variables
+add_formal_variables(dataset, first_hf.admission_date, followup_end)

@@ -1,0 +1,88 @@
+{
+  "specification": "formal-v1-2026-09-18",
+  "primary_start": "2022-01-01",
+  "primary_end": "2024-12-31",
+  "imputations": 30,
+  "imputation_iterations": 20,
+  "seed": 2092026,
+  "reference": "No record within 365 days",
+  "pre_groups": [
+    "No record within 365 days",
+    "181-365 days",
+    "91-180 days",
+    "1-90 days"
+  ],
+  "post_groups": [
+    "No record during days 1-30",
+    "Recorded during days 1-30"
+  ],
+  "outcomes": [
+    "mace",
+    "mi",
+    "stroke",
+    "cvdeath",
+    "death",
+    "cataract"
+  ],
+  "risk_times": [
+    30,
+    90,
+    180,
+    365
+  ],
+  "period_breaks": [
+    0,
+    30,
+    90,
+    180,
+    365
+  ],
+  "minimum_events_per_parameter": 10,
+  "minimum_group_events": 8,
+  "main_adjusters": [
+    "age",
+    "sex",
+    "bmi",
+    "smoking",
+    "ethnicity",
+    "imd",
+    "region",
+    "history_cvd",
+    "hypertension",
+    "diabetes",
+    "ckd",
+    "copd",
+    "cancer",
+    "dementia",
+    "prior_fracture",
+    "care_home",
+    "statin",
+    "antihypertensive",
+    "antiplatelet",
+    "anticoagulant",
+    "bone_active",
+    "prior_covid",
+    "other_vaccine"
+  ],
+  "subgroups": [
+    "age_band",
+    "sex",
+    "history_cvd",
+    "ethnicity",
+    "imd"
+  ],
+  "sensitivity": [
+    "complete_case",
+    "hospital_only",
+    "exclude_index_cvd",
+    "two_year_registration",
+    "surgery_adjusted",
+    "separate_no_record",
+    "earlier_2021",
+    "time_varying_post"
+  ],
+  "bmi_definition": "Latest valid recorded BMI in the 5 calendar years before admission, age >=18, value 10-100; no alternate BMI definition",
+  "clinical_status": "Specific GP event subsets require clinical review before manuscript finalisation",
+  "data_complete_through": "2026-01-01",
+  "source_completeness_status": "Confirm administrative source completeness before release"
+}

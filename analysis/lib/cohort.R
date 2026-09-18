@@ -67,6 +67,9 @@ prepare_cohort <- function(path) {
   flag_columns <- setdiff(flag_columns, numeric_columns)
   for (name in flag_columns) d[[name]] <- parse_flag(d[[name]], name)
 
+  source("analysis/lib/registration.R")
+  d <- reconcile_registration(d)
+
   if (anyNA(d$index_date) || anyNA(d$followup_end_date) || anyNA(d$admin_end_date)) {
     stop("Missing observation dates")
   }
@@ -122,7 +125,7 @@ prepare_cohort <- function(path) {
   d$observed_30_days <- d$followup_days >= 30
   d$index_year <- as.integer(format(d$index_date, "%Y"))
   d$index_month <- format(d$index_date, "%Y-%m")
-  attr(d, "phenotype_status") <- "PROVISIONAL_FEASIBILITY_ONLY"
+  attr(d, "phenotype_status") <- "EXTRACTED_FOR_FEASIBILITY_AND_FORMAL_ANALYSIS_REVIEW"
   d
 }
 

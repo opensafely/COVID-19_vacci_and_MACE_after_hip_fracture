@@ -48,7 +48,7 @@ add_feasibility_variables <- function(d) {
   d$ons_january_2019 <- d$index_date < as.Date("2019-02-01")
   d$index_multiple_spells <- d$index_same_day_spells_n > 1
   d$surgery_other_or_none <- d$surgery_type == "other_or_none"
-  d$reg_1y_at_index <- !is.na(d$gp_registration_start) & as.numeric(d$index_date - d$gp_registration_start) >= 365
+  d$reg_1y_at_index <- d$continuous_registration_prior_days >= 365
   d$zero_followup <- d$followup_days == 0
   for (event in c("mi", "stroke")) {
     date <- d[[paste0(event, "_hospital_date")]]

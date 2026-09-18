@@ -3,7 +3,7 @@ version: "5.0"
 actions:
 
 # Dummy tables are used locally; the backend supplies real tables in a secure run.
-# Keep the same workflow for both. This is a feasibility pipeline, not a final model.
+# Keep the same workflow for local synthetic and secure real-data runs.
 
   generate_dataset:
     run: ehrql:v1 generate-dataset analysis/dataset_definition.py
@@ -64,3 +64,46 @@ actions:
         sequence: output/review/post_vaccine_sequence.csv
       highly_sensitive:
         codes: output/feasibility/gp_record_codes.csv
+
+  manuscript_overview:
+    run: r:v2 analysis/manuscript_overview.R
+    needs: [prepare_cohort, generate_screening]
+    outputs:
+      moderately_sensitive:
+        tables: output/manuscript/overview/*.csv
+        report: output/manuscript/overview/report.html
+
+  analyse_pre_covax:
+    run: r:v2 analysis/formal_analysis.R --vaccine covax --design pre --output output/manuscript/pre_covax
+    needs: [prepare_cohort]
+    outputs:
+      moderately_sensitive:
+        tables: output/manuscript/pre_covax/*.csv
+
+  analyse_pre_fluvax:
+    run: r:v2 analysis/formal_analysis.R --vaccine fluvax --design pre --output output/manuscript/pre_fluvax
+    needs: [prepare_cohort]
+    outputs:
+      moderately_sensitive:
+        tables: output/manuscript/pre_fluvax/*.csv
+
+  analyse_post_covax:
+    run: r:v2 analysis/formal_analysis.R --vaccine covax --design post --output output/manuscript/post_covax
+    needs: [prepare_cohort]
+    outputs:
+      moderately_sensitive:
+        tables: output/manuscript/post_covax/*.csv
+
+  analyse_post_fluvax:
+    run: r:v2 analysis/formal_analysis.R --vaccine fluvax --design post --output output/manuscript/post_fluvax
+    needs: [prepare_cohort]
+    outputs:
+      moderately_sensitive:
+        tables: output/manuscript/post_fluvax/*.csv
+
+  package_manuscript:
+    run: r:v2 analysis/package_manuscript.R
+    needs: [manuscript_overview, analyse_pre_covax, analyse_pre_fluvax, analyse_post_covax, analyse_post_fluvax]
+    outputs:
+      moderately_sensitive:
+        tables: output/release/*.csv

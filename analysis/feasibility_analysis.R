@@ -32,7 +32,7 @@ tables$readiness <- data.frame(
             "high_energy_trauma", "registration_continuity", "source_complete_dates", "effectiveness_models"),
   status = c(if (nrow(d)) "PASS" else "REVIEW_EMPTY_COHORT", "PASS", "NOT_RUN",
              "REVIEW_REQUIRED", "IMPLEMENTED_FOR_REVIEW", "IMPLEMENTED_FOR_REVIEW", "NOT_IMPLEMENTED", "IMPLEMENTED_FOR_REVIEW",
-             "REVIEW_REQUIRED", "REVIEW_REQUIRED", "REVIEW_REQUIRED", "NOT_RUN")
+             "REVIEW_REQUIRED", "IMPLEMENTED_FOR_REVIEW", "REVIEW_REQUIRED", "IMPLEMENTED_FOR_REVIEW")
 )
 write_internal_csv(gp_code_summary(d), opts$codes)
 write_review(review_tables(tables), opts$output)
