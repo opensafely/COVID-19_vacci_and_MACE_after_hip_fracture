@@ -55,7 +55,7 @@ prepare_cohort <- function(path) {
                            intersect(c("gp_registration_start", "covax_most_recent_before_index",
                                        "fluvax_most_recent_before_index", "covid_positive_before_index"), names(d))))
   for (name in date_columns) d[[name]] <- parse_iso_date(d[[name]], name)
-  numeric_columns <- intersect(c("age", "bmi", "bmi_2y", "bmi_5y", "bmi_legacy_2y", "egfr_value", "imd_quintile", "covax_prior365_n",
+  numeric_columns <- intersect(c("age", "bmi", "egfr_value", "imd_quintile", "covax_prior365_n",
                                  "fluvax_prior365_n", "covax_post30_n", "fluvax_post30_n"), names(d))
   numeric_columns <- union(numeric_columns, grep("_n$", names(d), value = TRUE))
   for (name in numeric_columns) d[[name]] <- parse_number(d[[name]], name)

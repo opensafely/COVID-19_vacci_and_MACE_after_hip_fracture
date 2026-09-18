@@ -34,17 +34,15 @@ def add_review_variables(dataset, index, first_hf, current_reg):
     low_last = low.sort_by(clinical_events.date).last_for_patient().date
     dataset.egfr_low_repeated_90d = low.where(clinical_events.date <= low_last - days(90)).exists_for_patient()
 
-    # Adult recorded BMI: compare 2y and 5y, capped at the approved 2017 history start.
-    bmi_all = history.where(clinical_events.snomedct_code.is_in(list(set(codelists.bmi_codes + codelists.bmi_value_codes))))
+    # Query the full patient-relative five-year window for adult recorded BMI.
+    bmi_all = clinical_events.where(clinical_events.date >= index - years(5)).where(
+        clinical_events.date < index).where(
+        clinical_events.snomedct_code.is_in(list(set(codelists.bmi_codes + codelists.bmi_value_codes))))
     bmi_all = bmi_all.where(patients.age_on(clinical_events.date) >= 18)
     bmi_valid = bmi_all.where(clinical_events.numeric_value >= 10).where(clinical_events.numeric_value <= 100)
-    for window in (2, 5):
-        record = bmi_valid.where(clinical_events.date >= index - years(window)).sort_by(
-            clinical_events.date, clinical_events.numeric_value).last_for_patient()
-        dataset.add_column(f"bmi_{window}y", record.numeric_value)
-        dataset.add_column(f"bmi_{window}y_date", record.date)
-    dataset.bmi = dataset.bmi_5y
-    dataset.bmi_date = dataset.bmi_5y_date
+    bmi_record = bmi_valid.sort_by(clinical_events.date, clinical_events.numeric_value).last_for_patient()
+    dataset.bmi = bmi_record.numeric_value
+    dataset.bmi_date = bmi_record.date
     latest_raw = bmi_all.where(clinical_events.numeric_value.is_not_null()).sort_by(
         clinical_events.date, clinical_events.numeric_value).last_for_patient()
     dataset.bmi_latest_out_of_range = ((latest_raw.numeric_value < 10) | (latest_raw.numeric_value > 100))

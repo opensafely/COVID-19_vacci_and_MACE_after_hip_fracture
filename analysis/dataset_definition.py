@@ -383,25 +383,6 @@ dataset.prior_frac = has_prior_admission_with_diagnosis(
 )
 
 
-# ----- BMI -----
-bmi_record = (
-    clinical_events
-    .where(clinical_events.snomedct_code.is_in(codelists.bmi_codes))
-    .where(clinical_events.date < first_hf.admission_date)
-    .where(clinical_events.date >= lookback_start)
-    .where(clinical_events.date >= first_hf.admission_date - years(2))
-    .where(clinical_events.numeric_value.is_not_null())
-    .where(
-        (clinical_events.numeric_value >= 12.0)
-        & (clinical_events.numeric_value <= 80.0)
-    )
-    .sort_by(clinical_events.date)
-    .last_for_patient()
-)
-dataset.bmi_legacy_2y = bmi_record.numeric_value
-dataset.bmi_legacy_2y_date = bmi_record.date
-
-
 # ----- Smoking -----
 # Original SNOMED mapping retained only for the definition comparison.
 # The primary review field uses explicit CTV3 categories in review_variables.py.

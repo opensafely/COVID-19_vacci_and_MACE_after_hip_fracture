@@ -34,12 +34,10 @@ variable_definition_review <- function(d) {
   }
   cross <- paste0("eGFR record=", flag_true(d$egfr_recorded), "; CKD35 diagnosis=", flag_true(d$prior_ckd_stage3_5))
   add(count_categories(cross, sort(unique(cross)), "CKD", "Measurement versus diagnosis"))
-  for (name in c("bmi_legacy_2y", "bmi_2y", "bmi_5y")) {
-    age <- as.numeric(d$index_date - d[[paste0(name, "_date")]])
-    band <- cut(age, c(0, 365, 730, 1095, Inf), labels = c("1-365 days", "366-730 days", "731-1095 days", "1096+ days"))
-    add(count_categories(band, levels(band), "BMI", name))
-  }
-  add(count_categories(d$bmi_latest_out_of_range, c("FALSE", "TRUE"), "BMI", "Latest recorded numeric value outside 10-100"))
+  age <- as.numeric(d$index_date - d$bmi_date)
+  band <- cut(age, c(0, 365, 730, 1095, Inf), labels = c("1-365 days", "366-730 days", "731-1095 days", "1096+ days"))
+  add(count_categories(band, levels(band), "BMI", "Latest valid recorded BMI in prior 5 years"))
+  add(count_categories(d$bmi_latest_out_of_range, c("FALSE", "TRUE"), "BMI", "Latest numeric BMI in prior 5 years outside 10-100"))
   smoking_label <- function(x) ifelse(is.na(x), "Missing", x)
   cross <- paste0("Legacy=", smoking_label(d$smoking_legacy_status), "; explicit=", smoking_label(d$smoking_status))
   add(count_categories(cross, as.vector(outer(c("N", "E", "S", "Missing"), c("N", "E", "S", "Missing"),

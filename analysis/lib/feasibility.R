@@ -166,7 +166,7 @@ post_vaccination_feasibility <- function(d) {
 }
 
 missingness_by_year <- function(d) {
-  fields <- c("bmi", "bmi_legacy_2y", "bmi_2y", "bmi_5y", "smoking_status", "smoking_legacy_status",
+  fields <- c("bmi", "smoking_status", "smoking_legacy_status",
               "egfr_value", "care_home_address", "care_home_evidence", "ethnicity6", "imd_quintile", "region", "surgery_type",
               "hf_discharge_date", "hf_admission_method", "practice_go_live_date", "gp_registration_start")
   do.call(rbind, lapply(c("All", as.character(sort(unique(d$index_year)))), function(year) {
