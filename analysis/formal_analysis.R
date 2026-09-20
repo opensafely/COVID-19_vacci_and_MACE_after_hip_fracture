@@ -1,6 +1,7 @@
 source("analysis/lib/formal_cohort.R")
 source("analysis/lib/formal_models.R")
 source("analysis/lib/formal_outputs.R")
+source("analysis/lib/imputation_review.R")
 opts <- read_options(list(input="output/analytical_cohort.rds",vaccine="covax",design="pre",output="output/manuscript/pre_covax"))
 stopifnot(opts$vaccine %in% c("covax","fluvax"),opts$design %in% c("pre","post"))
 cfg <- formal_config()
@@ -9,6 +10,10 @@ x <- analysis_frame(d,opts$vaccine,opts$design)
 if(!nrow(x)) stop("No patients eligible for this prespecified analysis")
 message("Preparing ",opts$design," ",opts$vaccine," analysis")
 mi <- formal_impute(x,cfg)
+dir.create(opts$output,recursive=TRUE,showWarnings=FALSE)
+# Retain diagnostics for secure review without rerunning MICE. Never release this object.
+saveRDS(list(imputation=mi$imp,config=cfg,vaccine=opts$vaccine,design=opts$design,
+  session=sessionInfo()),file.path(opts$output,"imputation.rds"))
 results <- list()
 add <- function(a) results[[length(results)+1L]] <<- a
 for(outcome in cfg$outcomes) {
@@ -63,10 +68,20 @@ tables$models <- protect_model_results(results)
 tables$model_diagnostics <- protect_model_diagnostics(results)
 tables$imputation_methods <- imputation_diagnostics(mi,x)
 tables$imputation_trace <- imputation_trace(mi,x)
+tables$imputation_chain_trace <- imputation_chain_trace(mi,x)
+tables$imputation_logged_events <- imputation_logged_events(mi)
+tables$imputation_predictors <- imputation_predictors(mi)
+tables$imputation_distributions <- imputation_distributions(mi,x)
+plot_imputation_trace(tables$imputation_chain_trace,file.path(opts$output,"imputation_trace.png"),
+  paste(opts$design,opts$vaccine))
 tables$analysis_metadata <- data.frame(
- parameter=c("run_mode","imputations","imputation_iterations","specification","vaccine","design","start","end","reference","bmi","imputation_logged_events","clinical_definition_review","source_completeness"),
+ parameter=c("run_mode","imputations","imputation_iterations","specification","vaccine","design","start","end","reference","bmi","imputation_logged_events","clinical_definition_review","source_completeness","imputation_setup","cox_parameter_count","ph_diagnostic_scope","mice_version","survival_version"),
  value=c(cfg$run_mode,as.character(cfg$imputations),as.character(cfg$imputation_iterations),cfg$specification,opts$vaccine,opts$design,cfg$primary_start,cfg$primary_end,levels(x$exposure)[1],cfg$bmi_definition,
-         as.character(mi$events),cfg$clinical_status,cfg$source_completeness_status))
+         as.character(mi$events),cfg$clinical_status,cfg$source_completeness_status,
+         "Exposure encoded once; required incomplete targets retained; within-model dependency handling logged",
+         "Regression coefficients only; quarter strata excluded",
+         "First imputation only; not a pooled proportional-hazards test",
+         as.character(packageVersion("mice")),as.character(packageVersion("survival"))))
 dir.create(opts$output,recursive=TRUE,showWarnings=FALSE)
 for(name in names(tables)) {
   if(nrow(tables[[name]])>5000) stop("CSV exceeds release row limit: ",name)

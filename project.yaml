@@ -79,6 +79,9 @@ actions:
     outputs:
       moderately_sensitive:
         tables: output/manuscript/pre_covax/*.csv
+        trace: output/manuscript/pre_covax/imputation_trace.png
+      highly_sensitive:
+        imputation: output/manuscript/pre_covax/imputation.rds
 
   analyse_pre_fluvax:
     run: r:v2 analysis/formal_analysis.R --vaccine fluvax --design pre --output output/manuscript/pre_fluvax
@@ -86,6 +89,9 @@ actions:
     outputs:
       moderately_sensitive:
         tables: output/manuscript/pre_fluvax/*.csv
+        trace: output/manuscript/pre_fluvax/imputation_trace.png
+      highly_sensitive:
+        imputation: output/manuscript/pre_fluvax/imputation.rds
 
   analyse_post_covax:
     run: r:v2 analysis/formal_analysis.R --vaccine covax --design post --output output/manuscript/post_covax
@@ -93,6 +99,9 @@ actions:
     outputs:
       moderately_sensitive:
         tables: output/manuscript/post_covax/*.csv
+        trace: output/manuscript/post_covax/imputation_trace.png
+      highly_sensitive:
+        imputation: output/manuscript/post_covax/imputation.rds
 
   analyse_post_fluvax:
     run: r:v2 analysis/formal_analysis.R --vaccine fluvax --design post --output output/manuscript/post_fluvax
@@ -100,6 +109,9 @@ actions:
     outputs:
       moderately_sensitive:
         tables: output/manuscript/post_fluvax/*.csv
+        trace: output/manuscript/post_fluvax/imputation_trace.png
+      highly_sensitive:
+        imputation: output/manuscript/post_fluvax/imputation.rds
 
   package_manuscript:
     run: r:v2 analysis/package_manuscript.R

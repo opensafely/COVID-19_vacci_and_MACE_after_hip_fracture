@@ -27,6 +27,10 @@ outputs <- list(
  supplementary_complete_case_continuous=combine("complete_case_continuous"),
  imputation_methods=combine("imputation_methods"),
  imputation_trace=combine("imputation_trace"),
+ imputation_chain_trace=combine("imputation_chain_trace"),
+ imputation_logged_events=combine("imputation_logged_events"),
+ imputation_predictors=combine("imputation_predictors"),
+ imputation_distributions=combine("imputation_distributions"),
  supplementary_registration_change=read_table(file.path(opts$input,"overview/registration_change.csv")),
  variable_definitions=read_table(file.path(opts$input,"overview/definitions.csv")),analysis_metadata=combine("analysis_metadata"))
 primary <- outputs$all_models$model %in% c("primary_multiple_imputation","age_sex_calendar")
@@ -46,7 +50,7 @@ for(name in names(outputs)) {
  path <- file.path(opts$output,paste0(name,".csv"))
  write.csv(x,path,row.names=FALSE,na="[NOT_AVAILABLE]")
  if(file.info(path)$size>16*1024^2)stop("Review file exceeds size limit")
- support <- name %in% c("model_diagnostics","imputation_methods","imputation_trace","analysis_metadata","variable_definitions")
+ support <- grepl("^imputation_",name) || name %in% c("model_diagnostics","analysis_metadata","variable_definitions")
  manifest[[length(manifest)+1]] <- data.frame(file=paste0(name,".csv"),role=if(support)"supporting_review" else "manuscript_output",
    rows=nrow(x),status="REQUIRES_RESEARCHER_REVIEW_AND_AIRLOCK_APPROVAL",
    controls="Counts <=7 and selected complements suppressed; counts rounded5; rates derived from rounded cells; no patient-level outputs")

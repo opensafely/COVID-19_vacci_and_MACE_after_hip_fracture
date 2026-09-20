@@ -3,7 +3,11 @@
 suppressPackageStartupMessages(library(mice))
 
 formal_impute <- function(x, cfg) {
-  names_to_use <- unique(c(cfg$main_adjusters, "exposure", "baseline_vaccine", "quarter", "surgery"))
+  is_post <- all(x$start == 30)
+  # Pre-fracture exposure already IS baseline_vaccine. In landmark analyses,
+  # post_vaccination already IS exposure. Include each definition only once.
+  names_to_use <- unique(c("exposure", cfg$main_adjusters,
+    if (is_post) "baseline_vaccine", "quarter", "surgery"))
   z <- x[names_to_use]
   for (outcome in cfg$outcomes) {
     time <- x[[paste0("time_", outcome)]] - x$start
@@ -11,12 +15,12 @@ formal_impute <- function(x, cfg) {
     fit <- survfit(Surv(time, status == 1) ~ 1)
     at <- findInterval(time, fit$time)
     z[[paste0("event_", outcome)]] <- as.integer(status == 1)
-    z[[paste0("competing_", outcome)]] <- as.integer(status == 2)
+    if (outcome != "death") z[[paste0("competing_", outcome)]] <- as.integer(status == 2)
     z[[paste0("hazard_", outcome)]] <- c(0, fit$cumhaz)[at + 1]
   }
   # Numerical auxiliaries preserve follow-up information in imputation.
   z$followup <- x$followup
-  z$post_vaccination <- as.integer(!is.na(x$post_day))
+  if (!is_post) z$post_vaccination <- as.integer(!is.na(x$post_day))
   methods <- mice::make.method(z)
   for (name in names(z)) {
     if (!anyNA(z[[name]])) methods[name] <- ""
@@ -27,13 +31,14 @@ formal_impute <- function(x, cfg) {
   }
   if (!any(methods != "")) return(list(datasets = list(x), imp = NULL, methods = methods, events = 0L))
   predictors <- mice::make.predictorMatrix(z)
-  # Avoid exact duplicate exposure definitions: post analyses need baseline timing;
-  # pre analyses already include it as exposure.
-  if (identical(as.character(z$exposure), as.character(z$baseline_vaccine))) predictors[, "baseline_vaccine"] <- 0
+  # Keep incomplete targets active: global remove.collinear can disable their
+  # imputation. MICE's within-model dependency handling remains enabled, and its
+  # actual predictor changes are retained in the diagnostic outputs.
   imp <- mice(z, m = cfg$imputations, maxit = cfg$imputation_iterations, method = methods,
     predictorMatrix = predictors, seed = cfg$seed, printFlag = TRUE,
     remove.constant = TRUE, remove.collinear = FALSE, donors = 5, nnet.MaxNWts = 20000)
   changed <- names(methods)[methods != ""]
+  if (any(imp$method[changed] == "")) stop("MICE disabled a required imputation target")
   result <- lapply(seq_len(cfg$imputations), function(i) {
     out <- x; values <- mice::complete(imp, i)
     for (name in changed) out[[name]] <- values[[name]]
@@ -41,7 +46,7 @@ formal_impute <- function(x, cfg) {
     if (length(remaining)) stop("Imputation left missing values in: ", paste(remaining, collapse=", "))
     out
   })
-  list(datasets = result, imp = imp, methods = methods,
+  list(datasets = result, imp = imp, methods = imp$method,
        events = if (is.null(imp$loggedEvents)) 0L else nrow(imp$loggedEvents))
 }
 
@@ -91,7 +96,12 @@ fit_cox_safe <- function(x, formula, cfg) {
   if(!length(reference) || !any(as.character(x$exposure)==reference))
     return(list(status="MISSING_REFERENCE_GROUP",n=length(unique(x$patient_id)),events=sum(x$event)))
   if (!nrow(x) || length(unique(x$exposure)) < 2) return(list(status = "INSUFFICIENT_EXPOSURE_GROUPS"))
-  design <- tryCatch(model.matrix(formula, data = x), error = function(e) NULL)
+  # Quarterly strata have separate baseline hazards, not fitted coefficients.
+  # Count only regression terms for the unchanged events-per-parameter rule.
+  regression_terms <- terms(formula)
+  strata_terms <- grep("^strata\\([^()]*\\)$", attr(regression_terms, "term.labels"))
+  if (length(strata_terms)) regression_terms <- drop.terms(regression_terms, strata_terms, keep.response = TRUE)
+  design <- tryCatch(model.matrix(regression_terms, data = x), error = function(e) NULL)
   if (is.null(design)) return(list(status = "DESIGN_NOT_ESTIMABLE"))
   parameters <- max(1L, ncol(design) - 1L)
   event_n <- sum(x$event)

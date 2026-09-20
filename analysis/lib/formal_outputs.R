@@ -123,7 +123,7 @@ imputation_trace <- function(mi,x) {
   if(is.null(mi$imp)) return(data.frame(variable=character(),iteration=integer(),mean_across_chains=numeric(),sd_across_chains=numeric()))
   a <- mi$imp$chainMean; rows <- list()
   for(name in dimnames(a)[[1]]) {
-    if(!name %in% names(x) || sum(is.na(x[[name]]))<8) next
+    if(!name %in% names(x) || sum(is.na(x[[name]]))<32) next
     for(i in seq_len(dim(a)[2])) rows[[length(rows)+1]] <- data.frame(variable=name,iteration=i,
       mean_across_chains=round(mean(a[name,i,],na.rm=TRUE),3),sd_across_chains=round(sd(a[name,i,],na.rm=TRUE),3))
   }
