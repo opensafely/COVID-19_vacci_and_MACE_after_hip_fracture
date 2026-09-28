@@ -13,17 +13,21 @@ formal_config <- function() {
   cfg
 }
 formal_cohort <- function(d) {
+  required <- c("mace_mi_gp_date", "mace_mi_hospital_date", "mace_stroke_gp_date",
+                "mace_stroke_hospital_date", "mace_cvdeath_date")
+  if (!all(required %in% names(d)))
+    stop("The Charlie MACE definition requires a new generate_dataset and prepare_cohort run")
   d <- add_round2_variables(add_feasibility_variables(d))
   d$formal_eligible <- flag_true(d$index_hip_strict) & !flag_true(d$index_fall_W11_W17) &
     d$continuous_registration_prior_days >= 365 & d$positive_followup &
     d$index_date <= as.Date("2024-12-31")
-  d$event_mi <- date_min(d$acute_mi_gp_date, d$acute_mi_hospital_date)
-  d$event_stroke <- date_min(d$ischaemic_stroke_gp_date, d$ischaemic_stroke_hospital_date)
-  d$event_cvdeath <- d$mace_specific_death_date
+  d$event_mi <- date_min(d$mace_mi_gp_date, d$mace_mi_hospital_date)
+  d$event_stroke <- date_min(d$mace_stroke_gp_date, d$mace_stroke_hospital_date)
+  d$event_cvdeath <- d$mace_cvdeath_date
   d$event_mace <- date_min(d$event_mi, d$event_stroke, d$event_cvdeath)
   d$event_death <- d$all_cause_death_date
   d$event_cataract <- d$cataract_extraction_date
-  d$event_hospital_mace <- date_min(d$acute_mi_hospital_date, d$ischaemic_stroke_hospital_date, d$event_cvdeath)
+  d$event_hospital_mace <- date_min(d$mace_mi_hospital_date, d$mace_stroke_hospital_date, d$event_cvdeath)
   for (v in c("covax", "fluvax")) {
     category <- as.character(d[[paste0(v, "_cat")]])
     category[category %in% c("No prior record", ">365 days")] <- "No record within 365 days"

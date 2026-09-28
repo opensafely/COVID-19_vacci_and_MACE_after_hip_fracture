@@ -36,7 +36,10 @@ def build(n=4000):
     illness_codes = [code(f) for f in illnesses]
     medicine_codes = [code(f,c) for f,c in medications]
     ami = code("project-acute-mi-snomed.csv")
-    stroke = code("project-ischaemic-stroke-snomed.csv")
+    # Exercise the supplied stroke scope, including haemorrhagic/venous events.
+    stroke_types = [("1078001000000105", "I619"), ("1078001000000105", "I609"),
+                    ("230690007", "I64X"), ("195230003", "I636"),
+                    ("432504007", "I639")]
     egfr = code("bristol-multimorbidity_chronic-kidney-disease.csv")
     regions = ["North East", "North West", "Yorkshire and The Humber", "East Midlands",
         "West Midlands", "East", "London", "South East", "South West"]
@@ -56,8 +59,11 @@ def build(n=4000):
         add("patients", patient_id=patient,date_of_birth=f"{index.year-age}-01-01",
             sex=rng.choice(["female","male"]),date_of_death=day(death) if death else "")
         if death:
-            cause = "I219" if rng.random()<.75 else "J449"
-            add("ons_deaths",patient_id=patient,date=day(death),underlying_cause_of_death=cause,cause_of_death_01=cause)
+            cv_causes = ["I219", "I251", "I509", "I48X", "I619", "I99"]
+            cause = cv_causes[patient % len(cv_causes)] if rng.random()<.75 else "J449"
+            # MI mention under a non-CVD underlying cause must not count as CVD death.
+            mention = "I219" if cause == "J449" else cause
+            add("ons_deaths",patient_id=patient,date=day(death),underlying_cause_of_death=cause,cause_of_death_01=mention)
         reg = dict(patient_id=patient,practice_pseudo_id=rng.randint(1,200),
             practice_nuts1_region_name=rng.choice(regions),practice_systmone_go_live_date="2010-01-01")
         start = -rng.randint(800,1800)
@@ -93,7 +99,7 @@ def build(n=4000):
             timing = rng.choice([None,450,270,135,45])
             if timing: add("vaccinations",patient_id=patient,date=day(-timing),target_disease=target,product_name="Synthetic vaccine")
             if rng.random()<.5: add("vaccinations",patient_id=patient,date=day(rng.randint(1,30)),target_disease=target,product_name="Synthetic vaccine")
-        for c,icd in [(ami,"I219"),(stroke,"I639")]:
+        for c,icd in [(ami,"I219"),stroke_types[patient % len(stroke_types)]]:
             if rng.random()<.5:
                 t=rng.randint(31,365)
                 event(t,c)

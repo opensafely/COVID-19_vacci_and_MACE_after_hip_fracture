@@ -24,17 +24,18 @@ def add_formal_variables(dataset, index, admin_end):
         dataset.add_column(f"reg_chain_{i}_end_date", end)
         previous = start
     dataset.registration_chain_overflow = regs.where(practice_registrations.start_date > previous).exists_for_patient()
-    for prefix, codes, icd in [("acute_mi", codelists.acute_mi_snomed, codelists.acute_mi_icd10),
-                                ("ischaemic_stroke", codelists.ischaemic_stroke_snomed, codelists.ischaemic_stroke_icd10)]:
+    for prefix, codes, icd in [("mace_mi", codelists.acute_mi_snomed, codelists.mace_mi_icd10),
+                                ("mace_stroke", codelists.mace_stroke_snomed, codelists.mace_stroke_icd10)]:
         gp = first_event_after_snomed(codes, index, admin_end)
         hospital = first_admission_with_diagnosis(icd, index, admin_end)
         dataset.add_column(f"{prefix}_gp_date", gp.date)
         dataset.add_column(f"{prefix}_hospital_date", hospital.admission_date)
     dataset.cataract_extraction_date = first_admission_with_procedure(["C71", "C72"], index, admin_end).admission_date
-    # Exact death-certificate membership requires four-character codes, not prefixes.
-    death_codes = [f"I21{x}" for x in range(10)] + [f"I22{x}" for x in range(10)] + codelists.ischaemic_stroke_icd10
-    dataset.mace_specific_death_date = case(when(
-        ons_deaths.cause_of_death_is_in(death_codes) & (ons_deaths.date > index) & (ons_deaths.date <= admin_end)
+    # CVD death: Charlie's full supplied list, restricted to the underlying cause.
+    # Other certificate mentions alone do not qualify for the formal endpoint.
+    dataset.mace_cvdeath_date = case(when(
+        ons_deaths.underlying_cause_of_death.is_in(codelists.mace_cvd_death_icd10)
+        & (ons_deaths.date > index) & (ons_deaths.date <= admin_end)
     ).then(ons_deaths.date))
     for prefix, target in [("covax", COVID_TARGET), ("fluvax", FLU_TARGET)]:
         records = vaccinations.where(vaccinations.target_disease == target).where(

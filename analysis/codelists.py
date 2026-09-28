@@ -297,9 +297,17 @@ bone_med_codes = list(set(alendronate_codes + risedronate_codes + ibandronate_co
     zoledronate_codes + teriparatide_codes + denosumab_codes + raloxifene_codes + romosozumab_codes))
 
 
-# Explicit project subsets of the NHS primary-care refsets: event diagnoses only.
-# History, sequelae and isolated complications are excluded; see versioned CSV terms.
+# GP MI: Charlie supplied ICD-10 only; retain the acute-event NHS refset subset.
 acute_mi_snomed = codelist_from_csv("codelists/project-acute-mi-snomed.csv", column="code")
-ischaemic_stroke_snomed = codelist_from_csv("codelists/project-ischaemic-stroke-snomed.csv", column="code")
-acute_mi_icd10 = ["I21", "I22"]
-ischaemic_stroke_icd10 = ["I630", "I631", "I632", "I633", "I634", "I635", "I638", "I639"]
+
+# Charlie Harper's ASCEND PLUS component codelists supplied 2025-09-10.
+# Keep padded source codes and accept their equivalent unpadded ICD-10 form.
+# ONS uses exact membership; a three-character parent is not an ONS prefix query.
+def charlie_icd10(filename):
+    codes = codelist_from_csv(f"codelists/{filename}", column="code")
+    return sorted(set(codes + [code[:-1] for code in codes if len(code) == 4 and code.endswith("X")]))
+
+mace_mi_icd10 = charlie_icd10("charlie-non-fatal-mi-icd10.csv")
+mace_stroke_icd10 = charlie_icd10("charlie-non-fatal-stroke-icd10.csv")
+mace_stroke_snomed = codelist_from_csv("codelists/charlie-non-fatal-stroke-snomed.csv", column="code")
+mace_cvd_death_icd10 = charlie_icd10("charlie-cvd-death-icd10.csv")

@@ -75,13 +75,14 @@ tables$imputation_distributions <- imputation_distributions(mi,x)
 plot_imputation_trace(tables$imputation_chain_trace,file.path(opts$output,"imputation_trace.png"),
   paste(opts$design,opts$vaccine))
 tables$analysis_metadata <- data.frame(
- parameter=c("run_mode","imputations","imputation_iterations","specification","vaccine","design","start","end","reference","bmi","imputation_logged_events","clinical_definition_review","source_completeness","imputation_setup","cox_parameter_count","ph_diagnostic_scope","mice_version","survival_version"),
+ parameter=c("run_mode","imputations","imputation_iterations","specification","vaccine","design","start","end","reference","bmi","imputation_logged_events","clinical_definition_review","source_completeness","imputation_setup","cox_parameter_count","ph_diagnostic_scope","mice_version","survival_version","mace_definition","cvdeath_definition","event_date_rule"),
  value=c(cfg$run_mode,as.character(cfg$imputations),as.character(cfg$imputation_iterations),cfg$specification,opts$vaccine,opts$design,cfg$primary_start,cfg$primary_end,levels(x$exposure)[1],cfg$bmi_definition,
          as.character(mi$events),cfg$clinical_status,cfg$source_completeness_status,
          "Exposure encoded once; required incomplete targets retained; within-model dependency handling logged",
          "Regression coefficients only; quarter strata excluded",
          "First imputation only; not a pooled proportional-hazards test",
-         as.character(packageVersion("mice")),as.character(packageVersion("survival"))))
+         as.character(packageVersion("mice")),as.character(packageVersion("survival")),
+         cfg$mace_definition,cfg$cvdeath_definition,cfg$event_date_rule))
 dir.create(opts$output,recursive=TRUE,showWarnings=FALSE)
 for(name in names(tables)) {
   if(nrow(tables[[name]])>5000) stop("CSV exceeds release row limit: ",name)

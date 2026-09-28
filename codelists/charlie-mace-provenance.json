@@ -1,0 +1,37 @@
+{
+  "source": "Charlie Harper, ASCEND PLUS Data Linkage Documents, supplied 2025-09-10",
+  "reference": "https://doi.org/10.1001/jamanetworkopen.2021.39748",
+  "files": {
+    "charlie-non-fatal-mi-icd10.csv": {
+      "source_workbook": "1.2_non_fatal_mi_v1.0.xlsx",
+      "sheet": "ICD10",
+      "source_sha256": "4846514b54abd8466e128c7a85cee5f50767b8685bb9bb5b290ee08adf455c5f",
+      "rows": 12,
+      "transform": "Original code strings retained; extraction also accepts equivalent unpadded three-character ICD codes."
+    },
+    "charlie-non-fatal-stroke-icd10.csv": {
+      "source_workbook": "1.3_non_fatal_stroke_v1.1.xlsx",
+      "sheet": "ICD10",
+      "source_sha256": "20b5c5d335b89b5343f9fc8406dbf4464f321c80f54e79e68c038b61f3acfac6",
+      "rows": 32,
+      "transform": "Original code strings retained; extraction also accepts equivalent unpadded three-character ICD codes."
+    },
+    "charlie-cvd-death-icd10.csv": {
+      "source_workbook": "1.1_death_cvd_v1.0.xlsx",
+      "sheet": "ICD10",
+      "source_sha256": "3f0e26f813a9c17067c28b73511bd3eb9df555ef36c31b7d783b9ef26776ffa2",
+      "rows": 453,
+      "transform": "Original code strings retained; extraction also accepts equivalent unpadded three-character ICD codes."
+    },
+    "charlie-non-fatal-stroke-snomed.csv": {
+      "source_workbook": "1.3_non_fatal_stroke_v1.1.xlsx",
+      "sheet": "SNOMED-CT",
+      "source_sha256": "20b5c5d335b89b5343f9fc8406dbf4464f321c80f54e79e68c038b61f3acfac6",
+      "rows": 254,
+      "identifier_repairs": 80,
+      "repair_reference": "nhsd-primary-care-domain-refsets-strk_cod.csv",
+      "repair_reference_sha256": "3276b9b1e99e9c4b99d8c41af5dd5e55d37756c6479bd77e5ee3fb69090ed582",
+      "transform": "Strip leading apostrophe. Restore Excel-truncated identifiers only with a unique matching 15-digit prefix and matching clinical term in the NHS refset. Preserve supplied clinical scope."
+    }
+  }
+}

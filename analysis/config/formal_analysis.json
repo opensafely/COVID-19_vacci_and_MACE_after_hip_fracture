@@ -1,5 +1,5 @@
 {
-  "specification": "formal-v2-numerical-fixes-2026-09-20",
+  "specification": "formal-v3-charlie-mace-underlying-cause-2026-09-28",
   "primary_start": "2022-01-01",
   "primary_end": "2024-12-31",
   "imputations": 30,
@@ -82,7 +82,10 @@
     "time_varying_post"
   ],
   "bmi_definition": "Latest valid recorded BMI in the 5 calendar years before admission, age >=18, value 10-100; no alternate BMI definition",
-  "clinical_status": "Specific GP event subsets require clinical review before manuscript finalisation",
+  "clinical_status": "Charlie ASCEND PLUS component codelists supplied 2025-09-10; CVD death uses underlying cause; GP MI retains the NHS acute-event subset",
+  "mace_definition": "First MI, stroke (I60/I61/I63/I64 plus supplied SNOMED), or CVD death from the supplied 453-code list",
+  "cvdeath_definition": "ONS underlying cause only, using Charlie CVD death v1.0",
+  "event_date_rule": "First qualifying GP record, hospital admission or CVD death; no retrospective 30-day fatal/nonfatal reclassification; hospital admission must follow index admission",
   "data_complete_through": "2026-01-01",
   "source_completeness_status": "Confirm administrative source completeness before release"
 }
